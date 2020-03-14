@@ -33,9 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
-      body: SingleChildScrollView(
-        child: Padding(
+      resizeToAvoidBottomPadding: false,
+      body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             children: <Widget>[
@@ -202,7 +201,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
             ],
           ),
-        ),
       ),
     );
   }
