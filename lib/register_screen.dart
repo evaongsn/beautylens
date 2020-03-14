@@ -25,7 +25,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
@@ -146,9 +145,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.phone,
                   style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                   decoration: InputDecoration(
-                    // errorText: _phoneValided(_phoneEditingController.text)
-                    //     ? null
-                    //     : 'Invalid Phone Number',
                     prefixIcon: Icon(Icons.phone),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -172,7 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     GestureDetector(
                       onTap: _showEULA,
-                      child: Text('I Agree to Terms',
+                      child: Text('I Agree to Terms & Conditions',
                           style: TextStyle(
                               color: Colors.blue[600],
                               decoration: TextDecoration.underline,
@@ -245,22 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String phone = _phoneEditingController.text;
     String password = _passEditingController.text;
 
-    if (!_isChecked) {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.redAccent[100],
-          content: Text(
-            'Please Read and Agree to our Terms.',
-            style: TextStyle(
-              fontSize: 15,
-              fontFamily: 'Poppins',
-              color: Colors.black,
-            ),
-          ),
-        ),
-      );
-    } else if (name.isEmpty ||
+    if (name.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
         phone.isEmpty) {
@@ -270,6 +251,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: Colors.redAccent[100],
           content: Text(
             'Please Fill in All Information',
+            style: TextStyle(
+              fontSize: 15,
+              fontFamily: 'Poppins',
+              color: Colors.black,
+            ),
+          ),
+        ),
+      );
+    } else if (!_isChecked) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.redAccent[100],
+          content: Text(
+            'Please Read and Agree to our Terms & Conditions.',
             style: TextStyle(
               fontSize: 15,
               fontFamily: 'Poppins',
@@ -314,8 +310,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Confirmation Registration.'),
-              content: Text("Are You Sure Want To Proceed Registration ?"),
+              title: Text('Confirmation Registration.', 
+              style: TextStyle(fontFamily: 'Poppins',),),
+              content: Text("Are You Sure Want To Proceed Registration ?",
+              style: TextStyle(fontFamily: 'Poppins',),),
               actions: <Widget>[
                 FlatButton(
                   child: Text("YES"),
@@ -324,7 +322,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 FlatButton(
                   child: Text("NO"),
                   onPressed: () {
-                    //Put your code here which you want to execute on No button click.
                     Navigator.of(context).pop();
                   },
                 ),
@@ -377,7 +374,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SnackBar(
             backgroundColor: Colors.redAccent[100],
             content: Text(
-              'Registration Failed',
+              'Registration Failed, Email Already Exists.',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 color: Colors.black,
@@ -423,7 +420,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               fontSize: 12.0,
                             ),
                             text:
-                                "This End-User License Agreement is a legal agreement between you and Slumberjer This EULA agreement governs your acquisition and use of our MY.GROCERY software (Software) directly from Slumberjer or indirectly through a Slumberjer authorized reseller or distributor (a Reseller).Please read this EULA agreement carefully before completing the installation process and using the MY.GROCERY software. It provides a license to use the MY.GROCERY software and contains warranty information and liability disclaimers. If you register for a free trial of the MY.GROCERY software, this EULA agreement will also govern that trial. By clicking accept or installing and/or using the MY.GROCERY software, you are confirming your acceptance of the Software and agreeing to become bound by the terms of this EULA agreement. If you are entering into this EULA agreement on behalf of a company or other legal entity, you represent that you have the authority to bind such entity and its affiliates to these terms and conditions. If you do not have such authority or if you do not agree with the terms and conditions of this EULA agreement, do not install or use the Software, and you must not accept this EULA agreement.This EULA agreement shall apply only to the Software supplied by Slumberjer herewith regardless of whether other software is referred to or described herein. The terms also apply to any Slumberjer updates, supplements, Internet-based services, and support services for the Software, unless other terms accompany those items on delivery. If so, those terms apply. This EULA was created by EULA Template for MY.GROCERY. Slumberjer shall at all times retain ownership of the Software as originally downloaded by you and all subsequent downloads of the Software by you. The Software (and the copyright, and other intellectual property rights of whatever nature in the Software, including any modifications made thereto) are and shall remain the property of Slumberjer. Slumberjer reserves the right to grant licences to use the Software to third parties")),
+                                "This End-User License Agreement EULA is a legal agreement between you and Beauty Lens. This EULA agreement governs your acquisition and use of our Beauty Lens software (Software) directly from Beauty Lens or indirectly through a Beauty Lens authorized reseller or distributor (a Reseller). Please read this EULA agreement carefully before completing the installation process and using the Beauty Lens software. It provides a license to use the Beauty Lens software and contains warranty information and liability disclaimers. If you register for a free trial of the Beauty Lens software, this EULA agreement will also govern that trial. By clicking ACCEPT or installing and/or using the Beauty Lens software, you are confirming your acceptance of the Software and agreeing to become bound by the terms of this EULA agreement. If you are entering into this EULA agreement on behalf of a company or other legal entity, you represent that you have the authority to bind such entity and its affiliates to these terms and conditions. If you do not have such authority or if you do not agree with the terms and conditions of this EULA agreement, do not install or use the Software, and you must not accept this EULA agreement. This EULA agreement shall apply only to the Software supplied by Beauty Lens herewith regardless of whether other software is referred to or described herein. The terms also apply to any Beauty Lens updates, supplements, Internet-based services, and support services for the Software, unless other terms accompany those items on delivery. If so, those terms apply. This EULA was created by EULA Template for Beauty Lens. Beauty Lens hereby grants you a personal, non-transferable, non-exclusive licence to use the Beauty Lens software on your devices in accordance with the terms of this EULA agreement. You are permitted to load the Beauty Lens software (for example a PC, laptop, mobile or tablet) under your control. You are responsible for ensuring your device meets the minimum requirements of the Beauty Lens software. Beauty Lens shall at all times retain ownership of the Software as originally downloaded by you and all subsequent downloads of the Software by you. The Software (and the copyright, and other intellectual property rights of whatever nature in the Software, including any modifications made thereto) are and shall remain the property of Beauty Lens. Beauty Lens reserves the right to grant licences to use the Software to third parties.")),
                   ),
                 )
               ],

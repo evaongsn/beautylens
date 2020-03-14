@@ -11,7 +11,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  double screenHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,6 @@ class _SplashScreenState extends State<SplashScreen> {
         primaryColor: Colors.lightBlueAccent[100],
         fontFamily: 'Poppins',
       ),
-      title: 'Material App',
       home: Splash(),
     );
   }
