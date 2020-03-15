@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gradient_text/gradient_text.dart';
 
 void main() => runApp(LoginScreen());
@@ -22,11 +22,10 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passEditingController = new TextEditingController();
   String urlLogin = "http://hackanana.com/beautylens/php/login.php";
   @override
-  void initState() {
-    super.initState();
-    print("Hello i'm in INITSTATE");
-    // loadPref();
-  }
+  // void initState() {
+  //   super.initState();
+  //   loadPref();
+  // }
 
   @override
   Widget build(BuildContext context) {
