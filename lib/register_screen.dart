@@ -17,10 +17,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   double screenHeight;
   double screenWidth;
   String urlRegister = "http://hackanana.com/beautylens/php/register.php";
-  TextEditingController _nameEditingController = new TextEditingController();
-  TextEditingController _emailEditingController = new TextEditingController();
-  TextEditingController _phoneEditingController = new TextEditingController();
-  TextEditingController _passEditingController = new TextEditingController();
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +62,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                // Divider(height: 10,
-                // thickness: 5,
-                // color: Colors.blueGrey[100],),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text('Register',
                       style: TextStyle(
                           fontSize: 40,
-                          //fontWeight: FontWeight.bold,
                           fontFamily: 'Poppins')),
                 ),
 
@@ -78,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 15,
                 ),
                 TextFormField(
-                  controller: _nameEditingController,
+                  controller: nameController,
                   style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
@@ -94,13 +90,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 5,
                 ),
                 TextFormField(
-                  controller: _emailEditingController,
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                   decoration: InputDecoration(
-                    // errorText: _emailValided(_emailEditingController.text)
-                    //     ? null
-                    //     : 'Email not match',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -114,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 5,
                 ),
                 TextFormField(
-                  controller: _passEditingController,
+                  controller: passwordController,
                   style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
@@ -141,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 5,
                 ),
                 TextFormField(
-                  controller: _phoneEditingController,
+                  controller: phoneController,
                   keyboardType: TextInputType.phone,
                   style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                   decoration: InputDecoration(
@@ -236,10 +229,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _onRegister() {
-    String name = _nameEditingController.text;
-    String email = _emailEditingController.text;
-    String phone = _phoneEditingController.text;
-    String password = _passEditingController.text;
+    String name = nameController.text;
+    String email = emailController.text;
+    String phone = phoneController.text;
+    String password = passwordController.text;
 
     if (name.isEmpty ||
         email.isEmpty ||
@@ -344,10 +337,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _onPressed() {
     Navigator.of(context).pop();
-    String name = _nameEditingController.text;
-    String email = _emailEditingController.text;
-    String phone = _phoneEditingController.text;
-    String password = _passEditingController.text;
+    String name = nameController.text;
+    String email = emailController.text;
+    String phone = phoneController.text;
+    String password = passwordController.text;
 
     http.post(urlRegister, body: {
       "name": name,
@@ -392,16 +385,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _onChange(bool value) {
     setState(() {
       _isChecked = value;
-      //savepref(value);
     });
   }
 
   void _showEULA() {
-    // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           title: new Text("EULA"),
           content: new Container(
@@ -427,7 +417,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Close"),
               onPressed: () {
