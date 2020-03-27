@@ -5,9 +5,54 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:beautylens/user.dart';
 import 'package:beautylens/main_menu.dart';
+import 'package:loading_animations/loading_animations.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 void main() => runApp(LoginScreen());
 bool rememberMe = false;
+
+class Dialogs {
+  static Future<void> showLoadingDialog(
+      BuildContext context, GlobalKey key) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new WillPopScope(
+              onWillPop: () async => false,
+              child: SimpleDialog(
+                  key: key,
+                  backgroundColor: Colors.white70,
+                  contentPadding: EdgeInsets.all(20),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  children: <Widget>[
+                    Center(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            LoadingRotating.square(
+                              borderColor: Colors.indigo[300],
+                              backgroundColor: Colors.indigo[300],
+                              size: 30.0,
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            Text(
+                              "Please Wait....",
+                              style: TextStyle(
+                                color: Colors.indigo,
+                                fontSize: 16.0,
+                              ),
+                            )
+                          ]),
+                    )
+                  ]));
+        });
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,8 +61,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   double screenHeight;
   double screenWidth;
+  bool _showPassword = false;
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
   String urlLogin = "http://hackanana.com/beautylens/php/login.php";
@@ -48,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.center,
                 height: 80,
                 width: 80,
-                color: Colors.blueAccent[100],
+                color: Colors.indigo[200],
               ),
             ),
             Hero(
@@ -59,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Beauty Lens",
                   gradient: LinearGradient(colors: [
                     Colors.deepPurple[100],
-                    Colors.blueAccent[100],
+                    Colors.indigo[200],
                     Colors.pink[100]
                   ]),
                   style: TextStyle(
@@ -106,6 +153,16 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: passwordController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showPassword = !_showPassword;
+                    });
+                  },
+                  child: Icon(
+                    _showPassword ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(10.0),
@@ -121,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Checkbox(
                     value: rememberMe,
-                    activeColor: Colors.blueAccent[100],
+                    activeColor: Colors.indigo[200],
                     onChanged: (bool value) {
                       _rememberMe(value);
                     }),
@@ -137,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
             RaisedButton(
               onPressed: _login,
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 150),
-              color: Colors.lightBlueAccent[100],
+              color: Colors.indigo[200],
               child: Text(
                 'Login',
                 textAlign: TextAlign.center,
@@ -177,18 +234,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             FlatButton(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'Forget Password',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: Colors.blue[600],
-                        decoration: TextDecoration.underline),
-                  ),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Forget Password?',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Colors.indigo,
+                      decoration: TextDecoration.underline),
                 ),
-                onPressed: _forgotPassword,
-                ),
+              ),
+              onPressed: _forgotPassword,
+            ),
           ],
         ),
       ),
@@ -196,6 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    Dialogs.showLoadingDialog(context, _keyLoader);
     String email = emailController.text;
     String password = passwordController.text;
     http.post(urlLogin, body: {
@@ -207,19 +265,13 @@ class _LoginScreenState extends State<LoginScreen> {
       if (userdata[0] == "success login") {
         print('yes1');
         User _user = new User(
-            name: userdata[1],
-            email: email,
-            password: password,
-            phone: userdata[3],
-            credit: userdata[4],
-            datereg: userdata[5]
-            );
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => MainMenu(
-                      user: _user,
-                    )));
+          name: userdata[1],
+          email: email,
+          password: password,
+          phone: userdata[3],
+          //credit: userdata[4],
+          // datereg: userdata[5]
+        );
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             backgroundColor: Colors.greenAccent[100],
@@ -233,7 +285,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      } else if (userdata[0] == "failed login") {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+                transitionDuration: Duration(seconds: 3, milliseconds: 500),
+                pageBuilder: (c, d, e) => MainMenu(
+                      user: _user,
+                    )));
+      } else
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             backgroundColor: Colors.redAccent[100],
@@ -247,7 +307,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }
     }).catchError((err) {
       print(err);
     });
@@ -341,4 +400,4 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
- }
+}

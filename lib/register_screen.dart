@@ -29,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         fontFamily: 'Poppins',
-        primaryColor: Colors.lightBlueAccent[100],
+        primaryColor: Colors.indigo[200],
       ),
       home: Scaffold(
         key: _scaffoldKey,
@@ -46,13 +46,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   alignment: Alignment.center,
                   height: 80,
                   width: 80,
-                  color: Colors.blueAccent[100],
+                  color: Colors.indigo[200],
                 ),
                 GradientText(
                   "Beauty Lens",
                   gradient: LinearGradient(colors: [
                     Colors.deepPurple[100],
-                    Colors.blueAccent[100],
+                    Colors.indigo[200],
                     Colors.pink[100]
                   ]),
                   style: TextStyle(
@@ -163,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onTap: _showEULA,
                       child: Text('I Agree to Terms & Conditions',
                           style: TextStyle(
-                              color: Colors.blue[600],
+                              color: Colors.indigo,
                               decoration: TextDecoration.underline,
                               fontSize: 14)),
                     ),
@@ -172,7 +172,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 RaisedButton(
                   onPressed: _onRegister,
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 135),
-                  color: Colors.lightBlueAccent[100],
+                  color: Colors.indigo[200],
                   child: Text(
                     'Register',
                     textAlign: TextAlign.center,
