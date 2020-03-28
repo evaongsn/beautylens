@@ -341,13 +341,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String email = emailController.text;
     String phone = phoneController.text;
     String password = passwordController.text;
-
+print('eva');
     http.post(urlRegister, body: {
       "name": name,
       "email": email,
       "password": password,
       "phone": phone,
     }).then((res) {
+      print(res.body);
       if (res.body == "success") {
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(

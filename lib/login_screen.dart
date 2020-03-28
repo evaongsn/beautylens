@@ -7,52 +7,10 @@ import 'package:beautylens/user.dart';
 import 'package:beautylens/main_menu.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:beautylens/loading_dialog.dart';
 
 void main() => runApp(LoginScreen());
 bool rememberMe = false;
-
-class Dialogs {
-  static Future<void> showLoadingDialog(
-      BuildContext context, GlobalKey key) async {
-    return showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new WillPopScope(
-              onWillPop: () async => false,
-              child: SimpleDialog(
-                  key: key,
-                  backgroundColor: Colors.white70,
-                  contentPadding: EdgeInsets.all(20),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  children: <Widget>[
-                    Center(
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LoadingRotating.square(
-                              borderColor: Colors.indigo[300],
-                              backgroundColor: Colors.indigo[300],
-                              size: 30.0,
-                            ),
-                            SizedBox(
-                              width: 30,
-                            ),
-                            Text(
-                              "Please Wait....",
-                              style: TextStyle(
-                                color: Colors.indigo,
-                                fontSize: 16.0,
-                              ),
-                            )
-                          ]),
-                    )
-                  ]));
-        });
-  }
-}
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -269,8 +227,9 @@ class _LoginScreenState extends State<LoginScreen> {
           email: email,
           password: password,
           phone: userdata[3],
-          //credit: userdata[4],
-          // datereg: userdata[5]
+          credit: userdata[4],
+          datereg: userdata[5],
+          quantity: userdata[6],
         );
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
@@ -294,6 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       user: _user,
                     )));
       } else
+       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             backgroundColor: Colors.redAccent[100],
