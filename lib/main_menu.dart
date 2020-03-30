@@ -1,5 +1,8 @@
+// import 'package:flutter/gestures.dart';
+import 'package:beautylens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:beautylens/user.dart';
+import 'package:beautylens/cart_screen.dart';
 import 'package:beautylens/loading_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,7 +10,7 @@ import 'dart:convert';
 class MainMenu extends StatefulWidget {
   final User user;
   static final GlobalKey<ScaffoldState> scaffoldKey =
-      new GlobalKey<ScaffoldState>();
+      GlobalKey<ScaffoldState>();
   const MainMenu({Key key, this.user}) : super(key: key);
 
   @override
@@ -24,7 +27,6 @@ class _MainMenuState extends State<MainMenu> {
   String curType = "Recent";
   String cartQuantity = '0';
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  //  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -337,52 +339,100 @@ class _MainMenuState extends State<MainMenu> {
               ),
               Flexible(
                 child: GridView.count(
+                  //scrollDirection: Axis.horizontal,
                   crossAxisCount: 2,
                   childAspectRatio: (screenWidth / screenHeight) / 0.8,
                   children: List.generate(
                     products.length,
                     (index) {
                       return Card(
-                        elevation: 10,
+                        color: Colors.indigo[50],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          side: BorderSide(
+                            width: 1,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        margin: EdgeInsets.all(5),
+                        elevation: 6,
                         child: Padding(
                           padding: EdgeInsets.all(5),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
                               GestureDetector(
                                 onTap: () => imageDisplay(index),
                                 child: Container(
-                                    height: screenWidth / 4,
-                                    width: screenWidth / 4,
+                                    height: screenWidth / 5,
+                                    width: screenWidth / 3,
                                     decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.black),
+                                        shape: BoxShape.rectangle,
+                                        border:
+                                            Border.all(color: Colors.indigo),
                                         image: DecorationImage(
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.contain,
                                             image: NetworkImage(
                                                 "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
                               ),
-                              Text(products[index]['name'],
-                                  maxLines: 1,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                "RM " + products[index]['price'],
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              SizedBox(
+                                height: 10,
                               ),
-                              Text("Quantity available:" +
-                                  products[index]['quantity']),
-                              Text("Power:" + products[index]['power']),
-                              MaterialButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                minWidth: 100,
-                                height: 40,
-                                child: Text('Add to Cart'),
-                                color: Colors.blue[500],
-                                textColor: Colors.white,
-                                elevation: 10,
-                              //  onPressed: () => _addtocartdialog(index),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(products[index]['name'],
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14)),
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "RM " + products[index]['price'],
+                                  style: TextStyle(
+                                      color: Colors.indigo,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => viewProductsDetails(index),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "\nClick and View More Details\n",
+                                    style: TextStyle(
+                                      color: Colors.indigo[300],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: ClipOval(
+                                  child: Material(
+                                    elevation: 20,
+                                    color: Colors.indigo[100], // button color
+                                    child: InkWell(
+                                      splashColor: Colors.indigo[400],
+                                      onTap: () {
+                                        addToCartDialog(index);
+                                      },
+                                      child: SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: Icon(Icons.add_shopping_cart),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -394,6 +444,20 @@ class _MainMenuState extends State<MainMenu> {
               ),
             ],
           ),
+          floatingActionButton: FloatingActionButton.extended(
+            elevation: 5,
+            backgroundColor: Colors.indigo[300],
+          onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => CartScreen(
+                      user: widget.user,
+                    )));
+          },
+          icon: Icon(Icons.shopping_cart),
+          label: Text('\n'+cartQuantity,),
+        ),
         ),
       );
     }
@@ -409,7 +473,8 @@ class _MainMenuState extends State<MainMenu> {
             otherAccountsPictures: <Widget>[
               Text(
                 "RM" + widget.user.credit,
-                style: TextStyle(fontSize: 14, color: Colors.white),
+                maxLines: 1,
+                style: TextStyle(fontSize: 11, color: Colors.white),
               ),
             ],
             currentAccountPicture: CircleAvatar(
@@ -427,6 +492,14 @@ class _MainMenuState extends State<MainMenu> {
             trailing: Icon(Icons.search),
           ),
           ListTile(
+            onTap: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => CartScreen(
+                      user: widget.user,
+                    )));
+          },
             title: Text("My Cart"),
             trailing: Icon(Icons.shopping_cart),
           ),
@@ -442,6 +515,14 @@ class _MainMenuState extends State<MainMenu> {
             trailing: Icon(Icons.person),
           ),
           ListTile(
+            onTap: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => LoginScreen(
+                     
+                    )));
+          },
             title: Text("Log Out"),
             trailing: Icon(Icons.exit_to_app),
           )
@@ -457,7 +538,8 @@ class _MainMenuState extends State<MainMenu> {
       setState(() {
         var extractdata = json.decode(res.body);
         products = extractdata["products"];
-       // cartQuantity = widget.user.quantity;
+        cartQuantity = widget.user.quantity;
+        print(cartQuantity);
       });
     }).catchError((err) {
       print(err);
@@ -528,7 +610,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   imageDisplay(int index) {
-     showDialog(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -542,15 +624,214 @@ class _MainMenuState extends State<MainMenu> {
                   height: screenWidth / 2,
                   width: screenWidth / 2,
                   decoration: BoxDecoration(
-                      //border: Border.all(color: Colors.black),
+                      border: Border.all(color: Colors.indigo),
                       image: DecorationImage(
-                          fit: BoxFit.fill,
+                          fit: BoxFit.contain,
                           image: NetworkImage(
-                               "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
+                              "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
             ],
           ),
         ));
       },
     );
+  }
+
+  void viewProductsDetails(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+            backgroundColor: Colors.indigo[100],
+            elevation: 10.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16.0))),
+            content: new Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              height: screenHeight / 1.5,
+              //  color: Colors.white70,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      height: screenWidth / 2,
+                      width: screenWidth / 2,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.indigo),
+                          image: DecorationImage(
+                              fit: BoxFit.contain,
+                              image: NetworkImage(
+                                  "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(products[index]['name'],
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "RM " + products[index]['price'] + "\n",
+                      style: TextStyle(
+                          color: Colors.indigo,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Power: " + products[index]['power']),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Type: " + products[index]['type']),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Expiration Time: " +
+                        products[index]['expiration_time']),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Quantity Available: " +
+                        products[index]['quantity'] +
+                        " pairs\n"),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Material(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))
+                      ),
+                      elevation: 5,
+                      color: Colors.indigo[300], // button color
+                      child: InkWell(
+                        splashColor: Colors.indigo[400],
+                        onTap: () {
+                          Navigator.of(context).pop(false);
+                          addToCartDialog(index);
+                        },
+                        child: SizedBox(
+                          width: 140,
+                          height: 40,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                            'Add to Cart', style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      },
+    );
+  }
+
+  addToCartDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        backgroundColor: Colors.indigo[100],
+        elevation: 10.0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16.0))),
+        title: new Text('Add ' + products[index]['name'] + ' to Cart?'),
+        actions: <Widget>[
+          MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+                addToCart(index);
+              },
+              child: Text("Yes")),
+          MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text("No")),
+        ],
+      ),
+    );
+  }
+
+  void addToCart(int index) {
+    int quantity = int.parse(products[index]["quantity"]);
+    print(quantity);
+    print(products[index]["id"]);
+    print(widget.user.email);
+    if (quantity > 0) {
+      Dialogs.showLoadingDialog(context, _keyLoader);
+      String urlAddCart = "http://www.hackanana.com/beautylens/php/add_to_cart.php";
+      http.post(urlAddCart, body: {
+        "email": widget.user.email,
+        "products_id": products[index]["id"],
+      }).then((res) {
+        print(res.body);
+        if (res.body == "failed") {
+          MainMenu.scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.greenAccent[100],
+            content: Text(
+              'Failed Add to Cart',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        );
+        } else {
+          List respond = res.body.split(",");
+          setState(() {
+            cartQuantity = respond[1];  
+          });
+          
+         MainMenu.scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.greenAccent[100],
+            content: Text(
+              'Succes Add to Cart',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        );
+        }
+       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      }).catchError((err) {
+        print(err);
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      });
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    } else {
+      MainMenu.scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.greenAccent[100],
+            content: Text(
+              'Out of Stock',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        );
+    }
   }
 }
