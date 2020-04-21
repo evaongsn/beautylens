@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
-        primaryColor: Colors.lightBlueAccent[100],
+        primaryColor: Colors.indigo[200],
         fontFamily: 'Poppins',
       ),
       home: Splash(),
@@ -58,7 +58,7 @@ class _SplashState extends State<Splash> {
                 alignment: Alignment.center,
                 height: 80,
                 width: 80,
-                color: Colors.blueAccent[100],
+                color: Colors.indigo[200],
               ),
             ),
             Hero(
@@ -77,9 +77,9 @@ class _SplashState extends State<Splash> {
                     ),
                     colors: [
                       Colors.pinkAccent[100],
-                      Colors.purpleAccent[100],
-                      Colors.blueAccent[100],
-                      Colors.redAccent[100],
+                      Colors.indigo[200],
+                      Colors.indigo[300],
+                      Colors.purple[100],
                     ],
                     textAlign: TextAlign.start,
                     alignment:
@@ -92,7 +92,7 @@ class _SplashState extends State<Splash> {
               child: LinearProgressIndicator(
                 backgroundColor: Color.fromRGBO(220, 220, 220, 100),
                 valueColor: AlwaysStoppedAnimation(
-                  Color.fromRGBO(255, 192, 229, 100),
+                  Color(0xFF9FA8DA),
                 ),
               ),
             ),
