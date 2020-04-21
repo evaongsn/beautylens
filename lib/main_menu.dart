@@ -27,6 +27,7 @@ class _MainMenuState extends State<MainMenu> {
   String curType = "Recent";
   String cartQuantity = '0';
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _MainMenuState extends State<MainMenu> {
     TextEditingController productController = new TextEditingController();
     if (products == null) {
       return MaterialApp(
+         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: new ThemeData(
           fontFamily: 'Poppins',
@@ -111,6 +113,7 @@ class _MainMenuState extends State<MainMenu> {
       );
     } else {
       return MaterialApp(
+          navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: new ThemeData(
           fontFamily: 'Poppins',
@@ -449,14 +452,14 @@ class _MainMenuState extends State<MainMenu> {
             backgroundColor: Colors.indigo[300],
           onPressed: () {
             Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => CartScreen(
-                      user: widget.user,
-                    )));
+            this.context,
+             PageRouteBuilder(
+                transitionDuration: Duration(seconds: 3, milliseconds: 500),
+                pageBuilder: (c, d, e) => CartScreen(
+                      user: widget.user, )));
           },
           icon: Icon(Icons.shopping_cart),
-          label: Text('\n'+cartQuantity,),
+          label: Text(' '+cartQuantity,),
         ),
         ),
       );
@@ -817,7 +820,7 @@ class _MainMenuState extends State<MainMenu> {
         print(err);
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       });
-    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+  //  Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
     } else {
       MainMenu.scaffoldKey.currentState.showSnackBar(
           SnackBar(

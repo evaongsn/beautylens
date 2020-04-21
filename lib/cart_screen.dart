@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:beautylens/user.dart';
 import 'package:beautylens/loading_dialog.dart';
@@ -14,7 +15,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List cart;
+  List cart = [];
   double screenHeight, screenWidth;
   bool selfPickup = false;
   bool delivery = false;
@@ -29,16 +30,13 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+     if (cart == null) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    if (cart == null) {
-      return MaterialApp(
+     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: new ThemeData(
-          fontFamily: 'Poppins',
-          primaryColor: Colors.indigo[200],
-        ),
-        home: Scaffold(
+   
+  home: Scaffold(
           body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -100,51 +98,60 @@ class _CartScreenState extends State<CartScreen> {
             ],
           ),
         ),
-      );
-    } else {
-      Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 45,
-            ),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.menu, size: 30, color: Colors.indigo[300]),
-                  onPressed: () {},
-                ),
-                SizedBox(
-                  width: 85,
-                ),
-                Text(
-                  'My Cart',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ],
-            ),
-            Divider(
-              thickness: 2.0,
-              indent: 10.0,
-              endIndent: 10.0,
-              color: Colors.black,
-            ),
-            ListView.builder(
-              itemCount: cart == null ? 1 : cart.length + 2,
-              itemBuilder: (context, index){
-                if (index == cart.length){
-                  
-                }
-              })
-          ],
-        ),
-      );
+     );
+      
+    // } else {
+    //   MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     home: Scaffold(
+    //     body: Column(
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       children: <Widget>[
+    //         SizedBox(
+    //           height: 45,
+    //         ),
+    //         Row(
+    //           children: <Widget>[
+    //             IconButton(
+    //               icon: Icon(Icons.menu, size: 30, color: Colors.indigo[300]),
+    //               onPressed: () {},
+    //             ),
+    //             SizedBox(
+    //               width: 85,
+    //             ),
+    //             Text(
+    //               'My Cart',
+    //               textAlign: TextAlign.center,
+    //               style: TextStyle(
+    //                 fontSize: 28.0,
+    //                 color: Colors.black,
+    //                 fontFamily: 'Poppins',
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         Divider(
+    //           thickness: 2.0,
+    //           indent: 10.0,
+    //           endIndent: 10.0,
+    //           color: Colors.black,
+    //         ),
+    //         ListView.builder(
+    //           itemCount: cart == null ? 1 : cart.length + 2,
+    //           itemBuilder: (context, index){
+                
+    //             if (index == cart.length){
+    //               return Container(
+    //               width: 0.0,
+    //               height: 0.0,
+
+    //         );}
+    //             }
+    //           )
+    //       ],
+    //     ),
+    //   ),
+    //   );
     }
   }
 
@@ -169,8 +176,8 @@ class _CartScreenState extends State<CartScreen> {
       });
     }).catchError((err) {
       print(err);
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+     
     });
-    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+    
   }
 }
