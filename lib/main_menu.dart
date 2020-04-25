@@ -25,7 +25,7 @@ class _MainMenuState extends State<MainMenu> {
   bool visible = false;
   bool visibleSearch = false;
   String curType = "Recent";
-  String cartQuantity = '0';
+  String cartQuantity;
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -42,7 +42,7 @@ class _MainMenuState extends State<MainMenu> {
     TextEditingController productController = new TextEditingController();
     if (products == null) {
       return MaterialApp(
-         navigatorKey: navigatorKey,
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: new ThemeData(
           fontFamily: 'Poppins',
@@ -113,7 +113,7 @@ class _MainMenuState extends State<MainMenu> {
       );
     } else {
       return MaterialApp(
-          navigatorKey: navigatorKey,
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: new ThemeData(
           fontFamily: 'Poppins',
@@ -450,17 +450,26 @@ class _MainMenuState extends State<MainMenu> {
           floatingActionButton: FloatingActionButton.extended(
             elevation: 5,
             backgroundColor: Colors.indigo[300],
-          onPressed: () {
-            Navigator.push(
-            this.context,
-             PageRouteBuilder(
-                transitionDuration: Duration(seconds: 3, milliseconds: 500),
-                pageBuilder: (c, d, e) => CartScreen(
-                      user: widget.user, )));
-          },
-          icon: Icon(Icons.shopping_cart),
-          label: Text(' '+cartQuantity,),
-        ),
+            onPressed: () {
+              Navigator.push(
+                  this.context,
+                  PageRouteBuilder(
+                      transitionDuration:
+                          Duration(seconds: 3, milliseconds: 500),
+                      pageBuilder: (c, d, e) => CartScreen(
+                            user: widget.user,
+                          )));
+            },
+            icon: Icon(Icons.shopping_cart),
+            label: Baseline(
+              baselineType: TextBaseline.alphabetic,
+              child: Text(
+                cartQuantity.toString(),
+                //textAlign: TextAlign.center,
+              ),
+              baseline: 40.0,
+            ),
+          ),
         ),
       );
     }
@@ -496,13 +505,13 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-            Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => CartScreen(
-                      user: widget.user,
-                    )));
-          },
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => CartScreen(
+                            user: widget.user,
+                          )));
+            },
             title: Text("My Cart"),
             trailing: Icon(Icons.shopping_cart),
           ),
@@ -519,13 +528,11 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-            Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => LoginScreen(
-                     
-                    )));
-          },
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginScreen()));
+            },
             title: Text("Log Out"),
             trailing: Icon(Icons.exit_to_app),
           )
@@ -542,7 +549,6 @@ class _MainMenuState extends State<MainMenu> {
         var extractdata = json.decode(res.body);
         products = extractdata["products"];
         cartQuantity = widget.user.quantity;
-        print(cartQuantity);
       });
     }).catchError((err) {
       print(err);
@@ -653,7 +659,7 @@ class _MainMenuState extends State<MainMenu> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              height: screenHeight / 1.5,
+              height: screenHeight / 1.4,
               //  color: Colors.white70,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -694,6 +700,10 @@ class _MainMenuState extends State<MainMenu> {
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
+                    child: Text("Size: " + products[index]['size'] + " mm"),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
                     child: Text("Type: " + products[index]['type']),
                   ),
                   Align(
@@ -711,8 +721,7 @@ class _MainMenuState extends State<MainMenu> {
                     alignment: Alignment.bottomRight,
                     child: Material(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))
-                      ),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       elevation: 5,
                       color: Colors.indigo[300], // button color
                       child: InkWell(
@@ -727,10 +736,12 @@ class _MainMenuState extends State<MainMenu> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                            'Add to Cart', style: TextStyle(
-                              color: Colors.white,
+                              'Add to Cart',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
-                          ),),
+                          ),
                         ),
                       ),
                     ),
@@ -775,7 +786,8 @@ class _MainMenuState extends State<MainMenu> {
     print(widget.user.email);
     if (quantity > 0) {
       Dialogs.showLoadingDialog(context, _keyLoader);
-      String urlAddCart = "http://www.hackanana.com/beautylens/php/add_to_cart.php";
+      String urlAddCart =
+          "http://www.hackanana.com/beautylens/php/add_to_cart.php";
       http.post(urlAddCart, body: {
         "email": widget.user.email,
         "products_id": products[index]["id"],
@@ -783,58 +795,58 @@ class _MainMenuState extends State<MainMenu> {
         print(res.body);
         if (res.body == "failed") {
           MainMenu.scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.greenAccent[100],
-            content: Text(
-              'Failed Add to Cart',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                color: Colors.black,
-                fontSize: 15,
+            SnackBar(
+              backgroundColor: Colors.greenAccent[100],
+              content: Text(
+                'Failed Add to Cart',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                  fontSize: 15,
+                ),
               ),
             ),
-          ),
-        );
+          );
         } else {
           List respond = res.body.split(",");
           setState(() {
-            cartQuantity = respond[1];  
+            cartQuantity = respond[1];
           });
-          
-         MainMenu.scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.greenAccent[100],
-            content: Text(
-              'Succes Add to Cart',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                color: Colors.black,
-                fontSize: 15,
+
+          MainMenu.scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.greenAccent[100],
+              content: Text(
+                'Succes Add to Cart',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                  fontSize: 15,
+                ),
               ),
             ),
-          ),
-        );
+          );
         }
-       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       }).catchError((err) {
         print(err);
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       });
-  //  Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      //  Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
     } else {
       MainMenu.scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.greenAccent[100],
-            content: Text(
-              'Out of Stock',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                color: Colors.black,
-                fontSize: 15,
-              ),
+        SnackBar(
+          backgroundColor: Colors.greenAccent[100],
+          content: Text(
+            'Out of Stock',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.black,
+              fontSize: 15,
             ),
           ),
-        );
+        ),
+      );
     }
   }
 }
