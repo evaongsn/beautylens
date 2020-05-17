@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             RaisedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     (MaterialPageRoute(
                         builder: (BuildContext context) => RegisterScreen())));
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             PageRouteBuilder(
                 transitionDuration: Duration(seconds: 3, milliseconds: 500),

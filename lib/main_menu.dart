@@ -6,6 +6,7 @@ import 'package:beautylens/cart_screen.dart';
 import 'package:beautylens/loading_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:beautylens/profile_screen.dart';
 
 class MainMenu extends StatefulWidget {
   final User user;
@@ -21,6 +22,7 @@ class _MainMenuState extends State<MainMenu> {
   List products = [];
   int curNum = 1;
   double screenHeight, screenWidth;
+  int test = 1;
 
   bool visible = false;
   bool visibleSearch = false;
@@ -53,7 +55,7 @@ class _MainMenuState extends State<MainMenu> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                height: 45,
+                height: 35,
               ),
               Row(
                 children: <Widget>[
@@ -126,7 +128,7 @@ class _MainMenuState extends State<MainMenu> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                height: 45,
+                height: 35,
               ),
               Row(
                 children: <Widget>[
@@ -451,7 +453,7 @@ class _MainMenuState extends State<MainMenu> {
             elevation: 5,
             backgroundColor: Colors.indigo[300],
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                   this.context,
                   PageRouteBuilder(
                       transitionDuration:
@@ -461,15 +463,12 @@ class _MainMenuState extends State<MainMenu> {
                           )));
             },
             icon: Icon(Icons.shopping_cart),
-            label: Baseline(
-              baselineType: TextBaseline.alphabetic,
-              child: Text(
-                cartQuantity.toString(),
-                //textAlign: TextAlign.center,
+           label:  Text(
+                cartQuantity.toString().replaceAll('\n',''),
+               
               ),
-              baseline: 40.0,
+              
             ),
-          ),
         ),
       );
     }
@@ -505,7 +504,8 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-              Navigator.push(
+       
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => CartScreen(
@@ -523,12 +523,19 @@ class _MainMenuState extends State<MainMenu> {
             thickness: 2.0,
           ),
           ListTile(
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => ProfileScreen(user: widget.user)));
+            },
             title: Text("User Profile"),
             trailing: Icon(Icons.person),
           ),
           ListTile(
             onTap: () {
-              Navigator.push(
+             
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => LoginScreen()));
@@ -588,6 +595,7 @@ class _MainMenuState extends State<MainMenu> {
       if (res.body == "nodata") {
         MainMenu.scaffoldKey.currentState.showSnackBar(
           SnackBar(
+            behavior: SnackBarBehavior.fixed,
             backgroundColor: Colors.greenAccent[100],
             content: Text(
               'Product Not Found',
