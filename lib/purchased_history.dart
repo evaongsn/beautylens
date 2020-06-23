@@ -7,7 +7,6 @@ import 'package:beautylens/order_his_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
 class PurchasedHistoryScreen extends StatefulWidget {
   final User user;
   const PurchasedHistoryScreen({Key key, this.user}) : super(key: key);
@@ -17,13 +16,12 @@ class PurchasedHistoryScreen extends StatefulWidget {
 
 class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
   List purchasedpaymentList;
-  
 
   String titlecenter = "Loading Purchased History...";
   final dateFormat = new DateFormat('dd-MM-yyyy hh:mm a');
   var parsedDate;
   double screenHeight, screenWidth;
-  
+
   @override
   void initState() {
     super.initState();
@@ -35,34 +33,68 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Purchased History'),
-      ),
-      body: Center(
-        child: Column(children: <Widget>[
-          Text(
-            "Purchased History",
-            style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+      //  key: CartScreen.scaffoldKey,
+        body: Container(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 35,
+            ),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.arrow_back_ios,
+                      size: 30, color: Colors.indigo[300]),
+                  onPressed: () {
+                    
+                    Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                            transitionDuration:
+                                Duration(seconds: 3, milliseconds: 500),
+                            pageBuilder: (c, d, e) => MainMenu(
+                                  user: widget.user,
+                                  
+                                  
+                                )));
+                  },
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+                Text(
+                  'Purchased History',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    color: Colors.black,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              thickness: 2.0,
+              indent: 10.0,
+              endIndent: 10.0,
+              color: Colors.black,
+            ),
           purchasedpaymentList == null
               ? Flexible(
                   child: Container(
                       child: Center(
                           child: Text(
                   titlecenter,
-
-              
-
                   style: TextStyle(
-                      color: Color.fromRGBO(101, 255, 218, 50),
-                      fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ))))
               : Expanded(
                   child: ListView.builder(
                       //Step 6: Count the data
-                      itemCount: purchasedpaymentList == null ? 0 : purchasedpaymentList.length,
+                      itemCount: purchasedpaymentList == null
+                          ? 0
+                          : purchasedpaymentList.length,
                       itemBuilder: (context, index) {
                         return Padding(
                             padding: EdgeInsets.fromLTRB(10, 1, 10, 1),
@@ -85,7 +117,8 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                           flex: 2,
                                           child: Text(
                                             "RM " +
-                                                purchasedpaymentList[index]['total'],
+                                                purchasedpaymentList[index]
+                                                    ['total'],
                                             style:
                                                 TextStyle(color: Colors.white),
                                           )),
@@ -96,12 +129,14 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                purchasedpaymentList[index]['order_id'],
+                                                purchasedpaymentList[index]
+                                                    ['order_id'],
                                                 style: TextStyle(
                                                     color: Colors.white),
                                               ),
                                               Text(
-                                                purchasedpaymentList[index]['bill_id'],
+                                                purchasedpaymentList[index]
+                                                    ['bill_id'],
                                                 style: TextStyle(
                                                     color: Colors.white),
                                               ),
@@ -110,7 +145,8 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                       Expanded(
                                         child: Text(
                                           dateFormat.format(DateTime.parse(
-                                              purchasedpaymentList[index]['date'])),
+                                              purchasedpaymentList[index]
+                                                  ['date'])),
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         flex: 3,
@@ -138,7 +174,7 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
       } else {
         setState(() {
           var extractdata = json.decode(res.body);
-          purchasedpaymentList = extractdata["payments"];
+          purchasedpaymentList = extractdata["paymentslist"];
         });
       }
     }).catchError((err) {
@@ -148,8 +184,8 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
 
   loadOrderHistoryDetails(int index) {
     OrderH orderH = new OrderH(
-        billId: purchasedpaymentList[index]['bill_id'],
         orderId: purchasedpaymentList[index]['order_id'],
+        billId: purchasedpaymentList[index]['bill_id'],
         total: purchasedpaymentList[index]['total'],
         datePaid: purchasedpaymentList[index]['date']);
 

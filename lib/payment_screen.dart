@@ -86,7 +86,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         widget.user.name +
                         '&amount=' +
                         widget.value +
-                        '&orderid=' +
+                        '&order_id=' +
                         widget.orderId,
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
