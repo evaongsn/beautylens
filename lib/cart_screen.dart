@@ -12,13 +12,17 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'main_menu.dart';
+import 'package:random_string/random_string.dart';
+import 'payment_screen.dart';
+import 'package:intl/intl.dart';
 
 class CartScreen extends StatefulWidget {
   final User user;
+  final Function onRefresh;
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-  const CartScreen({Key key, this.user}) : super(key: key);
+  const CartScreen({Key key, this.user, this.onRefresh}) : super(key: key);
 
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -49,7 +53,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-    _getLocation();
+   // _getLocation();
     _loadCart();
   }
 
@@ -73,6 +77,7 @@ class _CartScreenState extends State<CartScreen> {
                   icon: Icon(Icons.arrow_back_ios,
                       size: 30, color: Colors.indigo[300]),
                   onPressed: () {
+                    
                     Navigator.pushReplacement(
                         context,
                         PageRouteBuilder(
@@ -80,6 +85,8 @@ class _CartScreenState extends State<CartScreen> {
                                 Duration(seconds: 3, milliseconds: 500),
                             pageBuilder: (c, d, e) => MainMenu(
                                   user: widget.user,
+                                  
+                                  
                                 )));
                   },
                 ),
@@ -108,7 +115,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Container(
                         child: Center(
                             child: Text(
-                    'Loading Your Cart',
+                    'Your Cart is Empty',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ))))
                 : Expanded(
@@ -572,7 +579,7 @@ class _CartScreenState extends State<CartScreen> {
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Updating cart...");
-    pr.show();
+    // pr.show();
     String urlLoadJobs = "https://hackanana.com/beautylens/php/load_cart.php";
     http.post(urlLoadJobs, body: {
       "email": widget.user.email,
@@ -716,7 +723,7 @@ class _CartScreenState extends State<CartScreen> {
       });
 
   void _onHomeDelivery(bool newValue) {
-    _getLocation();
+   // _getLocation();
     setState(() {
       _delivery = newValue;
       if (_delivery) {
@@ -728,28 +735,28 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  _getLocation() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    _currentPosition = await geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    //debugPrint('location: ${_currentPosition.latitude}');
-    final coordinates =
-        new Coordinates(_currentPosition.latitude, _currentPosition.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
-    if (!mounted) return;
-    setState(() {
-      curaddress = first.addressLine;
-      if (curaddress != null) {
-        latitude = _currentPosition.latitude;
-        longitude = _currentPosition.longitude;
-        return;
-      }
-    });
+  // _getLocation() async {
+  //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  //   _currentPosition = await geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  //   //debugPrint('location: ${_currentPosition.latitude}');
+  //   final coordinates =
+  //       new Coordinates(_currentPosition.latitude, _currentPosition.longitude);
+  //   var addresses =
+  //       await Geocoder.local.findAddressesFromCoordinates(coordinates);
+  //   var first = addresses.first;
+  //   if (!mounted) return;
+  //   setState(() {
+  //     curaddress = first.addressLine;
+  //     if (curaddress != null) {
+  //       latitude = _currentPosition.latitude;
+  //       longitude = _currentPosition.longitude;
+  //       return;
+  //     }
+  //   });
 
-    print("${first.featureName} : ${first.addressLine}");
-  }
+  //   print("${first.featureName} : ${first.addressLine}");
+  // }
 
   _getLocationfromlatlng(double lat, double lng, newSetState) async {
     final Geolocator geolocator = Geolocator()
@@ -786,7 +793,7 @@ class _CartScreenState extends State<CartScreen> {
       if (_currentPosition.latitude == null) {
         Toast.show("Location not available. Please wait...", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-        _getLocation();
+     //   _getLocation();
         return;
       }
       _controller = Completer();
@@ -936,57 +943,34 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void makePayment() {
+Future<void> makePayment() async {
     if (_selfPickup) {
       print("PICKUP");
-      CartScreen.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.fixed,
-          backgroundColor: Colors.greenAccent[100],
-          content: Text(
-            'Self Pickup',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              color: Colors.black,
-              fontSize: 15,
-            ),
-          ),
-        ),
-      );
-//        CartScreen.scaffoldKey.currentState.hideCurrentSnackBar();
+      Toast.show("Self Pickup", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
     } else if (_delivery) {
       print("HOME DELIVERY");
-      CartScreen.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.fixed,
-          backgroundColor: Colors.greenAccent[100],
-          content: Text(
-            'Home Delivery',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              color: Colors.black,
-              fontSize: 15,
-            ),
-          ),
-        ),
-      );
-      //      Scaffold.of(context).hideCurrentSnackBar();
+      Toast.show("Home Delivery", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
     } else {
-      CartScreen.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.fixed,
-          backgroundColor: Colors.greenAccent[100],
-          content: Text(
-            'Please Select Delivery Option',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              color: Colors.black,
-              fontSize: 15,
-            ),
-          ),
-        ),
-      );
-      //      Scaffold.of(context).hideCurrentSnackBar();
-    } //CartScreen.scaffoldKey.currentState.hideCurrentSnackBar();
+      Toast.show("Please select delivery option", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    }
+    var now = new DateTime.now();
+    var formatter = new DateFormat('ddMMyyyy-');
+    String orderId = widget.user.email.substring(1,4) +
+        "-" +
+        formatter.format(now) +
+        randomAlphaNumeric(6);
+    print(orderId);
+    await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => PaymentScreen(
+                  user: widget.user,
+                  value: totalPrice.toStringAsFixed(2),
+                  orderId: orderId,
+                )));
+   // _loadCart();
   }
 }

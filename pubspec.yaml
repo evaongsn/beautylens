@@ -49,6 +49,8 @@ dev_dependencies:
   recase: ^3.0.0
   flutter_speed_dial: ^1.2.5
   flutter_barcode_scanner: ^1.0.0
+  random_string: ^1.1.0
+  webview_flutter: ^0.3.14+1
 
 
 # For information on the generic Dart part of this file, see the

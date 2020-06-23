@@ -6,6 +6,7 @@ import 'package:beautylens/cart_screen.dart';
 import 'package:beautylens/loading_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:beautylens/purchased_history.dart';
 import 'package:beautylens/profile_screen.dart';
 
 class MainMenu extends StatefulWidget {
@@ -35,6 +36,8 @@ class _MainMenuState extends State<MainMenu> {
   void initState() {
     super.initState();
     _loadProducts();
+    _refreshCartQuantity();
+
   }
 
   @override
@@ -458,17 +461,14 @@ class _MainMenuState extends State<MainMenu> {
                   PageRouteBuilder(
                       transitionDuration:
                           Duration(seconds: 3, milliseconds: 500),
-                      pageBuilder: (c, d, e) => CartScreen(
-                            user: widget.user,
-                          )));
+                      pageBuilder: (c, d, e) =>
+                          CartScreen(user: widget.user, onRefresh: _refreshCartQuantity)));
             },
             icon: Icon(Icons.shopping_cart),
-           label:  Text(
-                cartQuantity.toString().replaceAll('\n',''),
-               
-              ),
-              
+            label: Text(
+              cartQuantity.toString().replaceAll('\n', ''),
             ),
+          ),
         ),
       );
     }
@@ -504,7 +504,6 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-       
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -518,6 +517,15 @@ class _MainMenuState extends State<MainMenu> {
           ListTile(
             title: Text("Purchased History"),
             trailing: Icon(Icons.history),
+            onTap: () => {
+              Navigator.pop(context),
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => PurchasedHistoryScreen(
+                            user: widget.user,
+                          ))),
+            },
           ),
           Divider(
             thickness: 2.0,
@@ -527,14 +535,14 @@ class _MainMenuState extends State<MainMenu> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => ProfileScreen(user: widget.user)));
+                      builder: (BuildContext context) =>
+                          ProfileScreen(user: widget.user)));
             },
             title: Text("User Profile"),
             trailing: Icon(Icons.person),
           ),
           ListTile(
             onTap: () {
-             
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -561,6 +569,8 @@ class _MainMenuState extends State<MainMenu> {
       print(err);
     });
   }
+
+
 
   void sortProducts(String type) {
     Dialogs.showLoadingDialog(context, _keyLoader);
@@ -596,7 +606,7 @@ class _MainMenuState extends State<MainMenu> {
         MainMenu.scaffoldKey.currentState.showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.fixed,
-            backgroundColor: Colors.greenAccent[100],
+            backgroundColor: Colors.redAccent[100],
             content: Text(
               'Product Not Found',
               style: TextStyle(
@@ -817,8 +827,11 @@ class _MainMenuState extends State<MainMenu> {
           );
         } else {
           List respond = res.body.split(",");
+
           setState(() {
             cartQuantity = respond[1];
+            widget.user.quantity = cartQuantity;
+            _loadProducts();
           });
 
           MainMenu.scaffoldKey.currentState.showSnackBar(
@@ -838,6 +851,7 @@ class _MainMenuState extends State<MainMenu> {
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       }).catchError((err) {
         print(err);
+
         Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
       });
       //  Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
@@ -856,5 +870,24 @@ class _MainMenuState extends State<MainMenu> {
         ),
       );
     }
+  }
+
+  void _refreshCartQuantity() async {
+    String urlLoadJobs =
+        "https://hackanana.com/beautylens/php/refresh_cart_quantity.php";
+    await http.post(urlLoadJobs, body: {
+      "email": widget.user.email,
+    }).then((res) {
+      if (res.body == "nodata") {
+      } else {
+      
+        setState(() {
+          cartQuantity = res.body;
+          widget.user.quantity = cartQuantity;
+        });
+      }
+    }).catchError((err) {
+      print(err);
+    });
   }
 }
