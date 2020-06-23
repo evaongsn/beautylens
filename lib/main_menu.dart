@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:beautylens/purchased_history.dart';
 import 'package:beautylens/profile_screen.dart';
+import 'package:beautylens/bloc.dart';
 
 class MainMenu extends StatefulWidget {
   final User user;
@@ -31,13 +32,13 @@ class _MainMenuState extends State<MainMenu> {
   String cartQuantity;
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final navigatorKey = GlobalKey<NavigatorState>();
+  NavigationDrawerBloc bloc = NavigationDrawerBloc();
 
   @override
   void initState() {
     super.initState();
     _loadProducts();
     _refreshCartQuantity();
-
   }
 
   @override
@@ -127,164 +128,227 @@ class _MainMenuState extends State<MainMenu> {
         home: Scaffold(
           key: MainMenu.scaffoldKey,
           drawer: mainDrawer(),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 35,
-              ),
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.menu, size: 30, color: Colors.indigo[300]),
-                    onPressed: () =>
-                        MainMenu.scaffoldKey.currentState.openDrawer(),
-                  ),
-                  SizedBox(width: 80),
-                  Text(
-                    'Products',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      color: Colors.black,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  SizedBox(width: 40),
-                  IconButton(
-                    icon: visibleSearch
-                        ? new Icon(Icons.search)
-                        : new Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        if (visibleSearch) {
-                          visibleSearch = false;
-                        } else {
-                          visibleSearch = true;
-                        }
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: visible
-                        ? new Icon(Icons.expand_more)
-                        : new Icon(Icons.expand_less),
-                    onPressed: () {
-                      setState(() {
-                        if (visible) {
-                          visible = false;
-                        } else {
-                          visible = true;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              Divider(
-                thickness: 2.0,
-                indent: 10.0,
-                endIndent: 10.0,
-                color: Colors.black,
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          body: StreamBuilder(
+            stream: bloc.getNavigation,
+            initialData: bloc.navigationProvider.currentNavigation,
+            builder: (context, snapshot) {
+              if (bloc.navigationProvider.currentNavigation == "My Cart") {
+                return CartScreen(user: widget.user,);
+              }
+              if (bloc.navigationProvider.currentNavigation ==
+                  "Purchased History") {
+                return PurchasedHistoryScreen(user: widget.user,);
+              }
+              // if (bloc.navigationProvider.currentNavigation == "PageTwo") {
+              //   return PageTwo();
+              // }
+              else {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    SizedBox(
+                      height: 35,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.menu,
+                              size: 30, color: Colors.indigo[300]),
+                          onPressed: () =>
+                              MainMenu.scaffoldKey.currentState.openDrawer(),
+                        ),
+                        SizedBox(width: 80),
+                        Text(
+                          'Products',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28.0,
+                            color: Colors.black,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                        SizedBox(width: 40),
+                        IconButton(
+                          icon: visibleSearch
+                              ? new Icon(Icons.search)
+                              : new Icon(Icons.search),
+                          onPressed: () {
+                            setState(() {
+                              if (visibleSearch) {
+                                visibleSearch = false;
+                              } else {
+                                visibleSearch = true;
+                              }
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: visible
+                              ? new Icon(Icons.expand_more)
+                              : new Icon(Icons.expand_less),
+                          onPressed: () {
+                            setState(() {
+                              if (visible) {
+                                visible = false;
+                              } else {
+                                visible = true;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 2.0,
+                      indent: 10.0,
+                      endIndent: 10.0,
+                      color: Colors.black,
+                    ),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Visibility(
+                            visible: visible,
+                            child: Card(
+                              color: Colors.indigo[200],
+                              elevation: 10,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    FlatButton(
+                                      onPressed: () => sortProducts("Recent"),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 100.0, vertical: 0.0),
+                                      child: Text(
+                                        "Recent",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                      color: Colors.black87,
+                                    ),
+                                    FlatButton(
+                                      onPressed: () =>
+                                          sortProducts("Brilliant Colored"),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 60.0, vertical: 0.0),
+                                      child: Text(
+                                        "Brilliant Colored",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                      color: Colors.black87,
+                                    ),
+                                    FlatButton(
+                                      onPressed: () => sortProducts("Mochi"),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 100.0, vertical: 0.0),
+                                      child: Text(
+                                        "Mochi",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                      color: Colors.black87,
+                                    ),
+                                    FlatButton(
+                                      onPressed: () =>
+                                          sortProducts("Ocean Sky"),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 100.0, vertical: 0.0),
+                                      child: Text(
+                                        "Ocean Sky",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                      color: Colors.black87,
+                                    ),
+                                    FlatButton(
+                                      onPressed: () =>
+                                          sortProducts("Seencon World II"),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 50.0, vertical: 0.0),
+                                      child: Text(
+                                        "Seencon World II",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Visibility(
-                      visible: visible,
+                      visible: visibleSearch,
                       child: Card(
                         color: Colors.indigo[200],
-                        elevation: 10,
-                        child: SingleChildScrollView(
-                          child: Column(
+                        child: Container(
+                          decoration: new BoxDecoration(
+                              color: Colors.white70,
+                              borderRadius: new BorderRadius.circular(5.0)),
+                          height: screenHeight / 12,
+                          margin: EdgeInsets.fromLTRB(3, 3, 3, 3),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              SizedBox(
-                                height: 5,
-                              ),
-                              FlatButton(
-                                onPressed: () => sortProducts("Recent"),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 100.0, vertical: 0.0),
-                                child: Text(
-                                  "Recent",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins',
+                              Flexible(
+                                child: Container(
+                                  height: 30,
+                                  child: TextFormField(
+                                    autofocus: false,
+                                    controller: productController,
+                                    decoration: InputDecoration(
+                                      icon: Icon(Icons.search),
+                                    ),
                                   ),
                                 ),
                               ),
-                              Divider(
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                                color: Colors.black87,
-                              ),
-                              FlatButton(
-                                onPressed: () =>
-                                    sortProducts("Brilliant Colored"),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 60.0, vertical: 0.0),
-                                child: Text(
-                                  "Brilliant Colored",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                                color: Colors.black87,
-                              ),
-                              FlatButton(
-                                onPressed: () => sortProducts("Mochi"),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 100.0, vertical: 0.0),
-                                child: Text(
-                                  "Mochi",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                                color: Colors.black87,
-                              ),
-                              FlatButton(
-                                onPressed: () => sortProducts("Ocean Sky"),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 100.0, vertical: 0.0),
-                                child: Text(
-                                  "Ocean Sky",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                                color: Colors.black87,
-                              ),
-                              FlatButton(
-                                onPressed: () =>
-                                    sortProducts("Seencon World II"),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 50.0, vertical: 0.0),
-                                child: Text(
-                                  "Seencon World II",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins',
+                              Flexible(
+                                child: MaterialButton(
+                                  color: Colors.indigo[200],
+                                  onPressed: () => {
+                                    sortProductsbySearch(productController.text)
+                                  },
+                                  elevation: 5,
+                                  child: Text(
+                                    "Search",
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -293,164 +357,124 @@ class _MainMenuState extends State<MainMenu> {
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: visibleSearch,
-                child: Card(
-                  color: Colors.indigo[200],
-                  child: Container(
-                    decoration: new BoxDecoration(
-                        color: Colors.white70,
-                        borderRadius: new BorderRadius.circular(5.0)),
-                    height: screenHeight / 12,
-                    margin: EdgeInsets.fromLTRB(3, 3, 3, 3),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Flexible(
-                          child: Container(
-                            height: 30,
-                            child: TextFormField(
-                              autofocus: false,
-                              controller: productController,
-                              decoration: InputDecoration(
-                                icon: Icon(Icons.search),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: MaterialButton(
-                            color: Colors.indigo[200],
-                            onPressed: () =>
-                                {sortProductsbySearch(productController.text)},
-                            elevation: 5,
-                            child: Text(
-                              "Search",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      curType,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Poppins',
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Text(
-                curType,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              Flexible(
-                child: GridView.count(
-                  //scrollDirection: Axis.horizontal,
-                  crossAxisCount: 2,
-                  childAspectRatio: (screenWidth / screenHeight) / 0.8,
-                  children: List.generate(
-                    products.length,
-                    (index) {
-                      return Card(
-                        color: Colors.indigo[50],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8),
-                          ),
-                          side: BorderSide(
-                            width: 1,
-                            color: Colors.indigo,
-                          ),
-                        ),
-                        margin: EdgeInsets.all(5),
-                        elevation: 6,
-                        child: Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 20,
-                              ),
-                              GestureDetector(
-                                onTap: () => imageDisplay(index),
-                                child: Container(
-                                    height: screenWidth / 5,
-                                    width: screenWidth / 3,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        border:
-                                            Border.all(color: Colors.indigo),
-                                        image: DecorationImage(
-                                            fit: BoxFit.contain,
-                                            image: NetworkImage(
-                                                "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(products[index]['name'],
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14)),
-                              ),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "RM " + products[index]['price'],
-                                  style: TextStyle(
-                                      color: Colors.indigo,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: GridView.count(
+                        //scrollDirection: Axis.horizontal,
+                        crossAxisCount: 2,
+                        childAspectRatio: (screenWidth / screenHeight) / 0.8,
+                        children: List.generate(
+                          products.length,
+                          (index) {
+                            return Card(
+                              color: Colors.indigo[50],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Colors.indigo,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () => viewProductsDetails(index),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "\nClick and View More Details\n",
-                                    style: TextStyle(
-                                      color: Colors.indigo[300],
-                                      fontSize: 12,
+                              margin: EdgeInsets.all(5),
+                              elevation: 6,
+                              child: Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Column(
+                                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 20,
                                     ),
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: ClipOval(
-                                  child: Material(
-                                    elevation: 20,
-                                    color: Colors.indigo[100], // button color
-                                    child: InkWell(
-                                      splashColor: Colors.indigo[400],
-                                      onTap: () {
-                                        addToCartDialog(index);
-                                      },
-                                      child: SizedBox(
-                                        width: 40,
-                                        height: 40,
-                                        child: Icon(Icons.add_shopping_cart),
+                                    GestureDetector(
+                                      onTap: () => imageDisplay(index),
+                                      child: Container(
+                                          height: screenWidth / 5,
+                                          width: screenWidth / 3,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.rectangle,
+                                              border: Border.all(
+                                                  color: Colors.indigo),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.contain,
+                                                  image: NetworkImage(
+                                                      "http://hackanana.com/beautylens/product_images/${products[index]['id']}.jpg")))),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(products[index]['name'],
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14)),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "RM " + products[index]['price'],
+                                        style: TextStyle(
+                                            color: Colors.indigo,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  ),
+                                    GestureDetector(
+                                      onTap: () => viewProductsDetails(index),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "\nClick and View More Details\n",
+                                          style: TextStyle(
+                                            color: Colors.indigo[300],
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: ClipOval(
+                                        child: Material(
+                                          elevation: 20,
+                                          color: Colors
+                                              .indigo[100], // button color
+                                          child: InkWell(
+                                            splashColor: Colors.indigo[400],
+                                            onTap: () {
+                                              addToCartDialog(index);
+                                            },
+                                            child: SizedBox(
+                                              width: 40,
+                                              height: 40,
+                                              child:
+                                                  Icon(Icons.add_shopping_cart),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
+                      ),
+                    ),
+                  ],
+                );
+              } //else
+            }, //builder
           ),
           floatingActionButton: FloatingActionButton.extended(
             elevation: 5,
@@ -461,8 +485,8 @@ class _MainMenuState extends State<MainMenu> {
                   PageRouteBuilder(
                       transitionDuration:
                           Duration(seconds: 3, milliseconds: 500),
-                      pageBuilder: (c, d, e) =>
-                          CartScreen(user: widget.user, onRefresh: _refreshCartQuantity)));
+                      pageBuilder: (c, d, e) => CartScreen(
+                          user: widget.user, onRefresh: _refreshCartQuantity)));
             },
             icon: Icon(Icons.shopping_cart),
             label: Text(
@@ -504,12 +528,15 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => CartScreen(
-                            user: widget.user,
-                          )));
+            //  Navigator.of(context).pop();
+
+              bloc.updateNavigation("CartScreen");
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (BuildContext context) => CartScreen(
+              //               user: widget.user,
+              //             )));
             },
             title: Text("My Cart"),
             trailing: Icon(Icons.shopping_cart),
@@ -518,13 +545,14 @@ class _MainMenuState extends State<MainMenu> {
             title: Text("Purchased History"),
             trailing: Icon(Icons.history),
             onTap: () => {
-              Navigator.pop(context),
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => PurchasedHistoryScreen(
-                            user: widget.user,
-                          ))),
+            //  Navigator.pop(context),
+               bloc.updateNavigation("Purchased History"),
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (BuildContext context) => PurchasedHistoryScreen(
+              //               user: widget.user,
+              //             ))),
             },
           ),
           Divider(
@@ -569,8 +597,6 @@ class _MainMenuState extends State<MainMenu> {
       print(err);
     });
   }
-
-
 
   void sortProducts(String type) {
     Dialogs.showLoadingDialog(context, _keyLoader);
@@ -880,7 +906,6 @@ class _MainMenuState extends State<MainMenu> {
     }).then((res) {
       if (res.body == "nodata") {
       } else {
-      
         setState(() {
           cartQuantity = res.body;
           widget.user.quantity = cartQuantity;

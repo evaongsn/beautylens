@@ -34,60 +34,55 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       //  key: CartScreen.scaffoldKey,
-        body: Container(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 35,
-            ),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios,
-                      size: 30, color: Colors.indigo[300]),
-                  onPressed: () {
-                    
-                    Navigator.pushReplacement(
-                        context,
-                        PageRouteBuilder(
-                            transitionDuration:
-                                Duration(seconds: 3, milliseconds: 500),
-                            pageBuilder: (c, d, e) => MainMenu(
-                                  user: widget.user,
-                                  
-                                  
-                                )));
-                  },
+      body: Container(
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
+            Widget>[
+          SizedBox(
+            height: 35,
+          ),
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_back_ios,
+                    size: 30, color: Colors.indigo[300]),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                          transitionDuration:
+                              Duration(seconds: 3, milliseconds: 500),
+                          pageBuilder: (c, d, e) => MainMenu(
+                                user: widget.user,
+                              )));
+                },
+              ),
+              SizedBox(
+                width: 30,
+              ),
+              Text(
+                'Purchased History',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28.0,
+                  color: Colors.black,
+                  fontFamily: 'Poppins',
                 ),
-                SizedBox(
-                  width: 30,
-                ),
-                Text(
-                  'Purchased History',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28.0,
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ],
-            ),
-            Divider(
-              thickness: 2.0,
-              indent: 10.0,
-              endIndent: 10.0,
-              color: Colors.black,
-            ),
+              ),
+            ],
+          ),
+          Divider(
+            thickness: 2.0,
+            indent: 10.0,
+            endIndent: 10.0,
+            color: Colors.black,
+          ),
           purchasedpaymentList == null
               ? Flexible(
                   child: Container(
                       child: Center(
                           child: Text(
                   titlecenter,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ))))
               : Expanded(
                   child: ListView.builder(
@@ -102,6 +97,7 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                 onTap: () => loadOrderHistoryDetails(index),
                                 child: Card(
                                   elevation: 10,
+                                  color: Colors.indigo[200],
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -109,10 +105,14 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                       Expanded(
                                           flex: 1,
                                           child: Text(
-                                            (index + 1).toString(),
+                                            '  ' + (index + 1).toString(),
                                             style:
-                                                TextStyle(color: Colors.white),
+                                                TextStyle(color: Colors.black),
                                           )),
+                                      VerticalDivider(
+                                        color: Colors.black26,
+                                        width: 1.5,
+                                      ),
                                       Expanded(
                                           flex: 2,
                                           child: Text(
@@ -120,34 +120,49 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                                                 purchasedpaymentList[index]
                                                     ['total'],
                                             style:
-                                                TextStyle(color: Colors.white),
+                                                TextStyle(color: Colors.black),
                                           )),
+                                      VerticalDivider(
+                                        color: Colors.black,
+                                        width: 2.0,
+                                      ),
                                       Expanded(
-                                          flex: 4,
+                                          flex: 5,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                purchasedpaymentList[index]
-                                                    ['order_id'],
+                                                'Order ID: ' +
+                                                    purchasedpaymentList[index]
+                                                        ['orderid'],
                                                 style: TextStyle(
-                                                    color: Colors.white),
+                                                    color: Colors.black),
+                                              ),
+                                              Divider(
+                                                color: Colors.black26,
+                                                height: 0.5,
                                               ),
                                               Text(
-                                                purchasedpaymentList[index]
-                                                    ['bill_id'],
+                                                "Bill ID: \n" +
+                                                    purchasedpaymentList[index]
+                                                        ['billid'],
                                                 style: TextStyle(
-                                                    color: Colors.white),
+                                                    color: Colors.black),
                                               ),
                                             ],
                                           )),
+                                      VerticalDivider(
+                                        width: 1.0,
+                                        thickness: 1.0,
+                                        color: Colors.black54,
+                                      ),
                                       Expanded(
                                         child: Text(
                                           dateFormat.format(DateTime.parse(
                                               purchasedpaymentList[index]
                                                   ['date'])),
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: Colors.black),
                                         ),
                                         flex: 3,
                                       ),
@@ -174,7 +189,7 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
       } else {
         setState(() {
           var extractdata = json.decode(res.body);
-          purchasedpaymentList = extractdata["paymentslist"];
+          purchasedpaymentList = extractdata["payments"];
         });
       }
     }).catchError((err) {
