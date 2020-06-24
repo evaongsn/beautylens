@@ -4,11 +4,11 @@ include_once("dbconnect.php");
 $email = $_POST['email'];
 $password = sha1($_POST['password']);
 
-$sql = "SELECT * FROM users WHERE EMAIL = '$email' AND PASSWORD = '$password'";
+$sql = "SELECT * FROM USERS WHERE EMAIL = '$email' AND PASSWORD = '$password'";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($row = $result ->fetch_assoc()){
-        echo "success login";
+        echo $data = "success login,".$row["NAME"].",".$row["EMAIL"].",".$row["PHONE"].",".$row["CREDIT"].",".$row["DATEREG"].','.$row["QUANTITY"];
     }
 }else{
     echo "failed login";

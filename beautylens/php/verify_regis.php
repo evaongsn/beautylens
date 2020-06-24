@@ -2,7 +2,7 @@
 
 include_once ("dbconnect.php");
 
-$email = $_POST['email'];
+$email = $_GET['email'];
 
 echo "$email is verified successfully.";
 

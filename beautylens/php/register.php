@@ -6,7 +6,7 @@ $email = $_POST['email'];
 $phone = $_POST['phone'];
 $password = sha1($_POST['password']);
 
-$sqlinsert = "INSERT INTO USER(NAME,EMAIL,PASSWORD,PHONE) VALUES ('$name','$email','$password','$phone')";
+$sqlinsert = "INSERT INTO USERS(NAME,EMAIL,PASSWORD,PHONE,CREDIT,QUANTITY) VALUES ('$name','$email','$password','$phone',0,0)";
 
 if ($conn->query($sqlinsert) === true)
 {
@@ -24,7 +24,7 @@ else
 function sendEmail($useremail) {
     $to      = $useremail; 
     $subject = 'Registeration Verification'; 
-    $message = 'http://hackanana.com/beautylens/php/verify.php?email='.$useremail; 
+    $message = 'http://hackanana.com/beautylens/php/verify_regis.php?email='.$useremail; 
     $headers = 'From: noreply@beautylens.com' . "\r\n" . 
     'Reply-To: '.$useremail . "\r\n" . 
     'X-Mailer: PHP/' . phpversion(); 
