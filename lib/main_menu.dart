@@ -128,22 +128,22 @@ class _MainMenuState extends State<MainMenu> {
         home: Scaffold(
           key: MainMenu.scaffoldKey,
           drawer: mainDrawer(),
-          body: StreamBuilder(
-            stream: bloc.getNavigation,
-            initialData: bloc.navigationProvider.currentNavigation,
-            builder: (context, snapshot) {
-              if (bloc.navigationProvider.currentNavigation == "My Cart") {
-                return CartScreen(user: widget.user,);
-              }
-              if (bloc.navigationProvider.currentNavigation ==
-                  "Purchased History") {
-                return PurchasedHistoryScreen(user: widget.user,);
-              }
-              // if (bloc.navigationProvider.currentNavigation == "PageTwo") {
-              //   return PageTwo();
-              // }
-              else {
-                return Column(
+          // body: StreamBuilder(
+          //   stream: bloc.getNavigation,
+          //   initialData: bloc.navigationProvider.currentNavigation,
+          //   builder: (context, snapshot) {
+          //     if (bloc.navigationProvider.currentNavigation == "My Cart") {
+          //       return CartScreen(user: widget.user,);
+          //     }
+          //     if (bloc.navigationProvider.currentNavigation ==
+          //         "Purchased History") {
+          //       return PurchasedHistoryScreen(user: widget.user,);
+          //     }
+          //     // if (bloc.navigationProvider.currentNavigation == "PageTwo") {
+          //     //   return PageTwo();
+          //     // }
+          //     else {
+              body: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(
@@ -472,9 +472,9 @@ class _MainMenuState extends State<MainMenu> {
                       ),
                     ),
                   ],
-                );
-              } //else
-            }, //builder
+            //     );
+            //   } //else
+            // }, //builder
           ),
           floatingActionButton: FloatingActionButton.extended(
             elevation: 5,
@@ -528,15 +528,15 @@ class _MainMenuState extends State<MainMenu> {
           ),
           ListTile(
             onTap: () {
-            //  Navigator.of(context).pop();
+              Navigator.of(context).pop();
 
-              bloc.updateNavigation("CartScreen");
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (BuildContext context) => CartScreen(
-              //               user: widget.user,
-              //             )));
+              // bloc.updateNavigation("CartScreen");
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => CartScreen(
+                            user: widget.user,
+                          )));
             },
             title: Text("My Cart"),
             trailing: Icon(Icons.shopping_cart),
@@ -544,15 +544,15 @@ class _MainMenuState extends State<MainMenu> {
           ListTile(
             title: Text("Purchased History"),
             trailing: Icon(Icons.history),
-            onTap: () => {
-            //  Navigator.pop(context),
-               bloc.updateNavigation("Purchased History"),
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (BuildContext context) => PurchasedHistoryScreen(
-              //               user: widget.user,
-              //             ))),
+            onTap: ()  {
+              Navigator.pop(context);
+              // bloc.updateNavigation("Purchased History"),
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => PurchasedHistoryScreen(
+                            user: widget.user,
+                          )));
             },
           ),
           Divider(

@@ -273,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgotPassword() {
-    TextEditingController phoneController = TextEditingController();
+   // TextEditingController phoneController = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {

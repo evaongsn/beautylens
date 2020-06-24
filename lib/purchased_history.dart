@@ -94,7 +94,7 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
                         return Padding(
                             padding: EdgeInsets.fromLTRB(10, 1, 10, 1),
                             child: InkWell(
-                                onTap: () => loadOrderHistoryDetails(index),
+                                onTap: () => loadPurchasedHistoryDetails(index),
                                 child: Card(
                                   elevation: 10,
                                   color: Colors.indigo[200],
@@ -197,18 +197,20 @@ class _PurchasedHistoryScreenState extends State<PurchasedHistoryScreen> {
     });
   }
 
-  loadOrderHistoryDetails(int index) {
+  loadPurchasedHistoryDetails(int index) {
     OrderH orderH = new OrderH(
-        orderId: purchasedpaymentList[index]['order_id'],
-        billId: purchasedpaymentList[index]['bill_id'],
+        orderId: purchasedpaymentList[index]['orderid'],
+        billId: purchasedpaymentList[index]['billid'],
         total: purchasedpaymentList[index]['total'],
         datePaid: purchasedpaymentList[index]['date']);
+ 
 
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => OrderHistoryDetailsScreen(
                   orderH: orderH,
+                  user: widget.user,
                 )));
   }
 }

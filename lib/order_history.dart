@@ -1,5 +1,6 @@
 class OrderH {
-  String orderId, billId, datePaid, total;
+  String orderId, billId, datePaid;
+  String total;
   OrderH({
     this.total,
     this.orderId,
