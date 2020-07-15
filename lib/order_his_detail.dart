@@ -96,13 +96,14 @@ class _OrderHistoryDetailsScreenState extends State<OrderHistoryDetailsScreen> {
                                 onTap: null,
                                 child: Card(
                                   elevation: 10,
+                                  color: Colors.indigo[200],
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Expanded(
                                           flex: 1,
-                                          child: Text(
+                                          child: Text('  '+
                                             (index + 1).toString(),
                                             style:
                                                 TextStyle(color: Colors.black),
@@ -112,10 +113,11 @@ class _OrderHistoryDetailsScreenState extends State<OrderHistoryDetailsScreen> {
                                           child: Text(
                                             purchasedDetails[index]['id'],
                                             style:
-                                                TextStyle(color: Colors.black),
+                                                TextStyle(color: Colors.black,
+                                                fontSize: 12,),
                                           )),
                                       Expanded(
-                                          flex: 4,
+                                          flex: 5,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -123,6 +125,7 @@ class _OrderHistoryDetailsScreenState extends State<OrderHistoryDetailsScreen> {
                                               Text(
                                                 purchasedDetails[index]['name'],
                                                 style: TextStyle(
+                                                  
                                                     color: Colors.black),
                                               ),
                                               Text(
@@ -134,11 +137,12 @@ class _OrderHistoryDetailsScreenState extends State<OrderHistoryDetailsScreen> {
                                             ],
                                           )),
                                       Expanded(
-                                        child: Text(
+                                        flex: 2,
+                                        child: Text( 'RM'+
                                           purchasedDetails[index]['price'],
                                           style: TextStyle(color: Colors.black),
                                         ),
-                                        flex: 3,
+                                        
                                       ),
                                     ],
                                   ),

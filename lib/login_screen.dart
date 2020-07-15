@@ -23,8 +23,10 @@ class _LoginScreenState extends State<LoginScreen> {
   double screenHeight;
   double screenWidth;
   bool _showPassword = false;
+  bool isGuest = false;
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+
   String urlLogin = "http://hackanana.com/beautylens/php/login.php";
   @override
   void initState() {
@@ -128,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 hintText: 'Password',
               ),
+              obscureText: !_showPassword,
             ),
             SizedBox(
               height: 15,
@@ -150,7 +153,12 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 10,
             ),
             RaisedButton(
-              onPressed: _login,
+              onPressed: () {
+                setState(() {
+                  isGuest = false;
+                  _login();
+                });
+              },
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 150),
               color: Colors.indigo[200],
               child: Text(
@@ -191,18 +199,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 side: BorderSide(color: Colors.black),
               ),
             ),
-            FlatButton(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'Forget Password?',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Colors.indigo,
-                      decoration: TextDecoration.underline),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                FlatButton(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Continue as Guest',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Colors.indigo,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isGuest = true;
+
+                      _guestLogin();
+                    });
+                  },
                 ),
-              ),
-              onPressed: _forgotPassword,
+                FlatButton(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Forget Password?',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Colors.indigo,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
+                  onPressed: _forgotPassword,
+                ),
+              ],
             ),
           ],
         ),
@@ -252,8 +284,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 pageBuilder: (c, d, e) => MainMenu(
                       user: _user,
                     )));
-      } else
-       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      } else if (userdata[0] == 'failed login') {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             backgroundColor: Colors.redAccent[100],
@@ -267,13 +299,77 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
+      }
+    }).catchError((err) {
+      print(err);
+    });
+  }
+
+  void _guestLogin() async {
+    Dialogs.showLoadingDialog(context, _keyLoader);
+    String email = 'guest@email.com';
+    String password = '123456';
+    http.post(urlLogin, body: {
+      "email": email,
+      "password": password,
+    }).then((res) {
+      var string = res.body;
+      List userdata = string.split(",");
+      if (userdata[0] == "success login") {
+        print('yes1');
+        User _user = new User(
+          name: userdata[1],
+          email: email,
+          password: password,
+          phone: userdata[3],
+          credit: userdata[4],
+          datereg: userdata[5],
+          quantity: userdata[6],
+        );
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.greenAccent[100],
+            content: Text(
+              'Gueset Mode',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        );
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+                transitionDuration: Duration(seconds: 3, milliseconds: 500),
+                pageBuilder: (c, d, e) => MainMenu(
+                      user: _user,
+                    )));
+      } else if (userdata[0] == 'failed login') {
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.redAccent[100],
+            content: Text(
+              'Login Failed',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        );
+      }
     }).catchError((err) {
       print(err);
     });
   }
 
   void _forgotPassword() {
-   // TextEditingController phoneController = TextEditingController();
+    // TextEditingController phoneController = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {

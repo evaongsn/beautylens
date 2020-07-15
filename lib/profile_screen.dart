@@ -13,11 +13,13 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:recase/recase.dart';
 import 'main_menu.dart';
+import 'package:beautylens/credit_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User user;
+  final Function onRefresh;
 
-  const ProfileScreen({Key key, this.user}) : super(key: key);
+  const ProfileScreen({Key key, this.user, this.onRefresh}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -33,9 +35,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     print("profile screen");
-    // DefaultCacheManager manager = new DefaultCacheManager();
-    // manager.emptyCache();
-    //WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+    print(widget.user.credit);
+    _refreshCredit();
+  }
+
+  void _refreshCredit() async {
+    String credit;
+    String urlLoadJobs =
+        "https://hackanana.com/beautylens/php/refresh_credit.php";
+    await http.post(urlLoadJobs, body: {
+      "email": widget.user.email,
+    }).then((res) {
+      if (res.body == "nodata") {
+      } else {
+        setState(() {
+          credit = res.body;
+          widget.user.credit = credit;
+        });
+      }
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   @override
@@ -46,8 +66,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(
               height: 35,
@@ -102,109 +123,178 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Container(
                         height: screenHeight / 4.8,
                         width: screenWidth / 3.2,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          
-                        ),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl:
-                              "http://hackanana.com/beautylens/users_images/${widget.user.email}.jpg?",
-                          imageBuilder: (context, imageProvider) => Container(
-                            width: 80.0,
-                            height: 80.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              image: DecorationImage(
-                                  image: imageProvider, fit: BoxFit.fill),
-                            ),
+                        // decoration: new BoxDecoration(
+                        //   shape: BoxShape.circle,
+                        // ),
+                        child: CircleAvatar(
+                          //  radius: 100.0,
+                          minRadius: 20,
+                          maxRadius: 50,
+                          backgroundColor: Colors.transparent,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl:
+                                "http://hackanana.com/beautylens/users_images/${widget.user.email}.jpg?",
+                            // imageBuilder: (context, imageProvider) => Container(
+                            //   width: 80.0,
+                            //   height: 80.0,
+                            //   decoration: BoxDecoration(
+                            //     shape: BoxShape.rectangle,
+                            //     image: DecorationImage(
+                            //         image: imageProvider, fit: BoxFit.fill),
+                            //   ),
+                            // ),
+                            placeholder: (context, url) => new SizedBox(
+                                height: 10.0,
+                                width: 10.0,
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) =>
+                                new Icon(MdiIcons.cameraIris, size: 64.0),
                           ),
-                          placeholder: (context, url) => new SizedBox(
-                              height: 10.0,
-                              width: 10.0,
-                              child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              new Icon(MdiIcons.cameraIris, size: 64.0),
                         ),
                       ),
                     ),
-                    Text(widget.user.name, style: TextStyle()),
+                    GestureDetector(
+                      onTap: changeName,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(widget.user.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.indigo[700],
+                              )),
+                          IconButton(
+                              icon: Icon(Icons.edit,
+                                  size: 25, color: Colors.indigo[500]),
+                              onPressed: changeName),
+                        ],
+                      ),
+                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(width: 10),
+                        //  SizedBox(width: 10),
                         Expanded(
                             child: Container(
                           child: Table(
-                              defaultColumnWidth: FlexColumnWidth(1.0),
+                              border: TableBorder(
+                                  horizontalInside: BorderSide(
+                                      color: Colors.indigoAccent, width: 0.5)),
+                              defaultColumnWidth: FlexColumnWidth(0.5),
                               columnWidths: {
-                                0: FlexColumnWidth(3.5),
-                                1: FlexColumnWidth(6.5),
+                                0: FlexColumnWidth(2),
+                                1: FlexColumnWidth(8),
                               },
-                              children: [                                                     
+                              children: [
                                 TableRow(children: [
                                   TableCell(
                                     child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        height: 20,
-                                        child: Text("Email",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white))),
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      child: IconButton(
+                                        icon: Icon(Icons.mail,
+                                            size: 25,
+                                            color: Colors.indigo[300]),
+                                        onPressed: () {},
+                                      ),
+                                    ),
+                                    // child: Text("Email",
+                                    //     style: TextStyle(
+                                    //         fontWeight: FontWeight.bold,
+                                    //         color: Colors.white))),
                                   ),
                                   TableCell(
                                     child: Container(
                                       alignment: Alignment.centerLeft,
-                                      height: 20,
+                                      height: 40,
                                       child: Text(widget.user.email,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              color: Colors.white)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
                                     ),
                                   ),
                                 ]),
                                 TableRow(children: [
                                   TableCell(
                                     child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        height: 20,
-                                        child: Text("Phone",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white))),
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      child: IconButton(
+                                        icon: Icon(Icons.phone_iphone,
+                                            size: 25,
+                                            color: Colors.indigo[300]),
+                                        onPressed: changePhone,
+                                      ),
+                                    ),
                                   ),
+                                  //       child: Text("Phone",
+                                  //           style: TextStyle(
+                                  //               fontWeight: FontWeight.bold,
+                                  //               color: Colors.white))),
+                                  // ),
                                   TableCell(
                                     child: Container(
                                       alignment: Alignment.centerLeft,
-                                      height: 20,
-                                      child: Text(widget.user.phone,
+                                      height: 40,
+                                      child: GestureDetector(
+                                        onTap: changePhone,
+                                        child: Text(
+                                          widget.user.phone,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              color: Colors.white)),
+                                              fontSize: 16,
+                                              color: Colors.indigo[700]),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ]),
                                 TableRow(children: [
                                   TableCell(
                                     child: Container(
-                                        alignment: Alignment.centerLeft,
-                                        height: 20,
-                                        child: Text("Register Date",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white))),
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      child: IconButton(
+                                          icon: Icon(Icons.date_range,
+                                              size: 25,
+                                              color: Colors.indigo[300]),
+                                          onPressed: () {}),
+                                    ),
                                   ),
                                   TableCell(
                                     child: Container(
                                       alignment: Alignment.centerLeft,
-                                      height: 20,
+                                      height: 40,
                                       child: Text(f.format(parsedDate),
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              color: Colors.white)),
+                                            fontSize: 16,
+                                          )),
+                                    ),
+                                  ),
+                                ]),
+                                TableRow(children: [
+                                  TableCell(
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      child: IconButton(
+                                          icon: Icon(
+                                              Icons.account_balance_wallet,
+                                              size: 25,
+                                              color: Colors.indigo[300]),
+                                          onPressed: () {}),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      height: 40,
+                                      child: Text(widget.user.credit,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          )),
                                     ),
                                   ),
                                 ]),
@@ -215,88 +305,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: 2,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              "Store Credit",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(widget.user.credit,
-                                style: TextStyle(color: Colors.indigo[200]))
-                          ],
-                        )
-                      ],
-                    ),
                   ],
                 ),
               ),
             ),
-            Text(
-              "SETTINGS",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
+            SizedBox(
+              height: 10,
             ),
             Card(
               margin: EdgeInsets.fromLTRB(10, 2, 10, 2),
               elevation: 3,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                      shrinkWrap: true,
+              color: Colors.indigo[100],
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        MaterialButton(
-                          onPressed: changeName,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Change Name"),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: changePassword,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Change Password"),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: changePhone,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Change Handphone Number"),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: _gotologinPage,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Login"),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: _registerAccount,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Register New Account"),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: null,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Buy Credit"),
+                        Expanded(
+                          child: Container(
+                            child: Table(
+                                border: TableBorder(
+                                    horizontalInside: BorderSide(
+                                        color: Colors.indigoAccent,
+                                        width: 0.5)),
+                                defaultColumnWidth: FlexColumnWidth(0.5),
+                                columnWidths: {
+                                  0: FlexColumnWidth(2),
+                                  1: FlexColumnWidth(8),
+                                },
+                                children: [
+                                  TableRow(children: [
+                                    TableCell(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 40,
+                                        child: IconButton(
+                                          icon: Icon(Icons.lock,
+                                              size: 25,
+                                              color: Colors.indigo[300]),
+                                          onPressed: changePassword,
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        height: 40,
+                                        child: GestureDetector(
+                                          onTap: changePassword,
+                                          child: Text(
+                                            'Change Password',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.indigo[700]),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                                  TableRow(children: [
+                                    TableCell(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 40,
+                                        child: IconButton(
+                                          icon: Icon(Icons.payment,
+                                              size: 25,
+                                              color: Colors.indigo[300]),
+                                          onPressed: _reloadCredit,
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        height: 40,
+                                        child: GestureDetector(
+                                          onTap: _reloadCredit,
+                                          child: Text(
+                                            'Reload Credit',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.indigo[700]),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                                ]),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 2,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -306,7 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _takePicture() async {
-    if (widget.user.email == "unregistered") {
+    if (widget.user.email == "guest") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -351,10 +458,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             "email": widget.user.email,
           }).then((res) {
         print(res.body);
-        if (res.body == "success") {
+        if (res.body == "Upload Successful") {
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.greenAccent[100],
+              content: Text(
+                'Upload Successful',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          );
           setState(() {
-            DefaultCacheManager manager = new DefaultCacheManager();
-            manager.emptyCache();
+            DefaultCacheManager().removeFile(
+                "http://hackanana.com/beautylens/users_images/${widget.user.email}.jpg?");
+            // DefaultCacheManager manager = new DefaultCacheManager();
+            // manager.emptyCache();
           });
         } else {
           _scaffoldKey.currentState.showSnackBar(
@@ -378,7 +500,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void changeName() {
-    if (widget.user.email == "unregistered") {
+    if (widget.user.email == "guest") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -459,7 +581,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _changeName(String name) {
-    if (widget.user.email == "unregistered") {
+    if (widget.user.email == "guest") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -524,7 +646,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void changePassword() {
-    if (widget.user.email == "unregistered") {
+    if (widget.user.email == "guest@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -648,7 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         );
-        return;
+        Navigator.of(context).pop();
       } else {}
     }).catchError((err) {
       print(err);
@@ -656,7 +778,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void changePhone() {
-    if (widget.user.email == "unregistered") {
+    if (widget.user.email == "guest") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -880,6 +1002,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         );
       },
+    );
+  }
+
+  void _reloadCredit() {
+    if (widget.user.email == "guest") {
+      Toast.show("Please register to use this function", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      return;
+    }
+    TextEditingController creditController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: new Text(
+                "Reload Credit?",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              content: new TextField(
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  controller: creditController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Enter RM',
+                    icon: Icon(
+                      Icons.attach_money,
+                      color: Colors.indigo,
+                    ),
+                  )),
+              actions: <Widget>[
+                new FlatButton(
+                    child: new Text(
+                      "Yes",
+                      style: TextStyle(
+                        color: Colors.indigo,
+                      ),
+                    ),
+                    onPressed: () =>
+                        _buyCredit(creditController.text.toString())),
+                new FlatButton(
+                  child: new Text(
+                    "No",
+                    style: TextStyle(
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  onPressed: () => {Navigator.of(context).pop()},
+                ),
+              ]);
+        });
+  }
+
+  _buyCredit(String credit) {
+    print("RM " + credit);
+    if (credit.length <= 0) {
+      Toast.show("Please enter correct amount", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        title: new Text(
+          'Buy store credit RM ' + credit,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        content: new Text(
+          'Are you sure?',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        actions: <Widget>[
+          MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+                Navigator.of(context).pop(false);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CreditScreen(
+                              user: widget.user,
+                              value: credit,
+                            )));
+              },
+              child: Text(
+                "Ok",
+                style: TextStyle(
+                  color: Colors.indigo,
+                ),
+              )),
+          MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+                Navigator.of(context).pop(false);
+              },
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.indigo,
+                ),
+              )),
+        ],
+      ),
     );
   }
 }

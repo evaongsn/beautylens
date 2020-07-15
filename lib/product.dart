@@ -1,8 +1,7 @@
-  
 class Product {
-  String id, name, expirationtime, type;
-  double price, size;
-  int quantity, power;
+  String id, name, expirationtime, type, date, price;
+  String size;
+  String quantity, power;
   Product({
     this.id,
     this.name,
@@ -11,6 +10,7 @@ class Product {
     this.power,
     this.size,
     this.expirationtime,
+    this.date,
     this.type,
   });
 }

@@ -53,7 +53,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-   // _getLocation();
+    _getLocation();
     _loadCart();
   }
 
@@ -77,7 +77,6 @@ class _CartScreenState extends State<CartScreen> {
                   icon: Icon(Icons.arrow_back_ios,
                       size: 30, color: Colors.indigo[300]),
                   onPressed: () {
-                    
                     Navigator.pushReplacement(
                         context,
                         PageRouteBuilder(
@@ -85,8 +84,6 @@ class _CartScreenState extends State<CartScreen> {
                                 Duration(seconds: 3, milliseconds: 500),
                             pageBuilder: (c, d, e) => MainMenu(
                                   user: widget.user,
-                                  
-                                  
                                 )));
                   },
                 ),
@@ -115,7 +112,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Container(
                         child: Center(
                             child: Text(
-                    'Your Cart is Empty',
+                    'Loading...',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ))))
                 : Expanded(
@@ -128,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
                                 width: screenWidth / 2.5,
                                 child: InkWell(
                                   child: Card(
-                                   elevation: 5,
+                                    elevation: 5,
                                     child: Column(
                                       children: <Widget>[
                                         SizedBox(
@@ -202,28 +199,33 @@ class _CartScreenState extends State<CartScreen> {
                                                           color: Colors.black,
                                                         ),
                                                       ),
-                                                    //  SizedBox(width: 10),
+                                                      //  SizedBox(width: 10),
                                                       OutlineButton(
-                                                          color: Colors
-                                                              .black,
+                                                          color: Colors.black,
                                                           onPressed: () => {
                                                                 _loadMapDialog()
                                                               },
                                                           child: Icon(
                                                             Icons.my_location,
-                                                            color: Colors.indigo[200],
+                                                            color: Colors
+                                                                .indigo[200],
                                                             size: 30,
                                                           ),
                                                           shape:
                                                               new CircleBorder()),
                                                     ],
                                                   ),
-                                                  Align ( alignment: Alignment.centerLeft,
-                                                    child: Text("  Current Address:",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black)),),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                        "  Current Address:",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black)),
+                                                  ),
                                                   Row(
                                                     children: <Widget>[
                                                       Text("  "),
@@ -256,7 +258,6 @@ class _CartScreenState extends State<CartScreen> {
                             return Container(
                                 //height: screenHeight / 3,
                                 child: Card(
-                           
                               elevation: 5,
                               child: Column(
                                 children: <Widget>[
@@ -270,9 +271,7 @@ class _CartScreenState extends State<CartScreen> {
                                           color: Colors.black)),
                                   SizedBox(height: 10),
                                   Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(6, 0, 6, 0),
-                         
+                                      padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
                                       child: Table(
                                           defaultColumnWidth:
                                               FlexColumnWidth(1.0),
@@ -431,7 +430,6 @@ class _CartScreenState extends State<CartScreen> {
                           index -= 0;
 
                           return Card(
-                            
                               elevation: 10,
                               child: Padding(
                                   padding: EdgeInsets.all(5),
@@ -530,7 +528,8 @@ class _CartScreenState extends State<CartScreen> {
                                                             },
                                                             child: Icon(
                                                               Icons.remove,
-                                                              color: Colors.indigo[200],
+                                                              color: Colors
+                                                                  .indigo[200],
                                                             ),
                                                           ),
                                                         ],
@@ -556,7 +555,8 @@ class _CartScreenState extends State<CartScreen> {
                                                         },
                                                         child: Icon(
                                                           Icons.delete,
-                                                          color: Colors.indigo[200],
+                                                          color: Colors
+                                                              .indigo[200],
                                                         ),
                                                       ),
                                                     ],
@@ -723,7 +723,7 @@ class _CartScreenState extends State<CartScreen> {
       });
 
   void _onHomeDelivery(bool newValue) {
-   // _getLocation();
+    _getLocation();
     setState(() {
       _delivery = newValue;
       if (_delivery) {
@@ -735,28 +735,28 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  // _getLocation() async {
-  //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  //   _currentPosition = await geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   //debugPrint('location: ${_currentPosition.latitude}');
-  //   final coordinates =
-  //       new Coordinates(_currentPosition.latitude, _currentPosition.longitude);
-  //   var addresses =
-  //       await Geocoder.local.findAddressesFromCoordinates(coordinates);
-  //   var first = addresses.first;
-  //   if (!mounted) return;
-  //   setState(() {
-  //     curaddress = first.addressLine;
-  //     if (curaddress != null) {
-  //       latitude = _currentPosition.latitude;
-  //       longitude = _currentPosition.longitude;
-  //       return;
-  //     }
-  //   });
+  _getLocation() async {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    _currentPosition = await geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    //debugPrint('location: ${_currentPosition.latitude}');
+    final coordinates =
+        new Coordinates(_currentPosition.latitude, _currentPosition.longitude);
+    var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = addresses.first;
+    if (!mounted) return;
+    setState(() {
+      curaddress = first.addressLine;
+      if (curaddress != null) {
+        latitude = _currentPosition.latitude;
+        longitude = _currentPosition.longitude;
+        return;
+      }
+    });
 
-  //   print("${first.featureName} : ${first.addressLine}");
-  // }
+    print("${first.featureName} : ${first.addressLine}");
+  }
 
   _getLocationfromlatlng(double lat, double lng, newSetState) async {
     final Geolocator geolocator = Geolocator()
@@ -793,7 +793,7 @@ class _CartScreenState extends State<CartScreen> {
       if (_currentPosition.latitude == null) {
         Toast.show("Location not available. Please wait...", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-     //   _getLocation();
+        _getLocation();
         return;
       }
       _controller = Completer();
@@ -943,7 +943,7 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-Future<void> makePayment() async {
+  Future<void> makePayment() async {
     if (_selfPickup) {
       print("PICKUP");
       Toast.show("Self Pickup", context,
@@ -958,7 +958,7 @@ Future<void> makePayment() async {
     }
     var now = new DateTime.now();
     var formatter = new DateFormat('ddMMyyyy-');
-    String orderId = widget.user.email.substring(1,4) +
+    String orderId = widget.user.email.substring(1, 4) +
         "-" +
         formatter.format(now) +
         randomAlphaNumeric(6);
@@ -968,9 +968,9 @@ Future<void> makePayment() async {
         MaterialPageRoute(
             builder: (BuildContext context) => PaymentScreen(
                   user: widget.user,
-                  value: totalPrice.toStringAsFixed(2),
+                  value: totalAmount.toStringAsFixed(2),
                   orderId: orderId,
                 )));
-   // _loadCart();
+    // _loadCart();
   }
 }

@@ -27,6 +27,7 @@ dependencies:
   gradient_text: ^1.0.2
   liquid_progress_indicator: ^0.3.2
   loading_animations: "^2.1.0"
+  circular_profile_avatar: ^1.0.6
 
 dev_dependencies:
   flutter_test:

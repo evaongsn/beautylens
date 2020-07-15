@@ -1,20 +1,28 @@
-import 'package:beautylens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'user.dart';
 import 'dart:async';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:beautylens/profile_screen.dart';
+import 'package:http/http.dart' as http;
 
-class PaymentScreen extends StatefulWidget {
+class CreditScreen extends StatefulWidget {
   final User user;
-  final String orderId, value;
-  PaymentScreen({this.user, this.orderId, this.value});
+  final String value;
+  CreditScreen({this.user, this.value});
 
   @override
-  _PaymentScreenState createState() => _PaymentScreenState();
+  _CreditScreenState createState() => _CreditScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _CreditScreenState extends State<CreditScreen> {
   Completer<WebViewController> _controller = Completer<WebViewController>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _refreshCredit();
+    print('credit' + widget.user.credit);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,20 +46,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     icon: Icon(Icons.arrow_back_ios,
                         size: 30, color: Colors.indigo[300]),
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           PageRouteBuilder(
                               transitionDuration:
                                   Duration(seconds: 3, milliseconds: 500),
-                              pageBuilder: (c, d, e) => CartScreen(
-                                    user: widget.user,
-                                  )));
+                              pageBuilder: (c, d, e) => ProfileScreen(
+                                  user: widget.user,
+                                  onRefresh: _refreshCredit)));
                     }),
                 SizedBox(
                   width: 85,
                 ),
                 Text(
-                  'Payment',
+                  'Buy Credit',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28.0,
@@ -73,7 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Expanded(
               child: WebView(
                 initialUrl:
-                    'http://hackanana.com/beautylens/php/payment.php?email=' +
+                    'http://hackanana.com/beautylens/php/buy_credit.php?email=' +
                         widget.user.email +
                         '&phone=' +
                         widget.user.phone +
@@ -81,8 +89,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         widget.user.name +
                         '&amount=' +
                         widget.value +
-                        '&order_id=' +
-                        widget.orderId,
+                        '&current_credit=' +
+                        widget.user.credit,
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
                   _controller.complete(webViewController);
@@ -93,5 +101,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       ),
     );
+  }
+
+  void _refreshCredit() async {
+    String credit;
+    String urlLoadJobs =
+        "https://hackanana.com/beautylens/php/refresh_credit.php";
+    await http.post(urlLoadJobs, body: {
+      "email": widget.user.email,
+    }).then((res) {
+      if (res.body == "nodata") {
+      } else {
+        setState(() {
+          credit = res.body;
+          widget.user.credit = credit;
+        });
+      }
+    }).catchError((err) {
+      print(err);
+    });
   }
 }
