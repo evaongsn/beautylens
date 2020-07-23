@@ -8,7 +8,6 @@ import 'login_screen.dart';
 import 'register_screen.dart';
 import 'user.dart';
 import 'package:http/http.dart' as http;
-import 'package:toast/toast.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:recase/recase.dart';
@@ -413,7 +412,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _takePicture() async {
-    if (widget.user.email == "guest") {
+    if (widget.user.email == "guest@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -431,10 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     File _image = await ImagePicker.pickImage(
         source: ImageSource.camera, maxHeight: 400, maxWidth: 300);
-    //print(_image.lengthSync());
     if (_image == null) {
-      // Toast.show("Please take image first", context,
-      //     duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -500,7 +496,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void changeName() {
-    if (widget.user.email == "guest") {
+    if (widget.user.email == "guest@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -516,7 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
       return;
     }
-    if (widget.user.email == "admin@beautylens.com") {
+    if (widget.user.email == "admin@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -581,7 +577,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _changeName(String name) {
-    if (widget.user.email == "guest") {
+    if (widget.user.email == "guest@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -778,7 +774,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void changePhone() {
-    if (widget.user.email == "guest") {
+    if (widget.user.email == "guest@email.com") {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent[100],
@@ -1006,9 +1002,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _reloadCredit() {
-    if (widget.user.email == "guest") {
-      Toast.show("Please register to use this function", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    if (widget.user.email == "guest@email.com") {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent[100],
+          content: Text(
+            'Please Register Before You Add Credit',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.black,
+              fontSize: 15,
+            ),
+          ),
+        ),
+      );
       return;
     }
     TextEditingController creditController = TextEditingController();
@@ -1063,8 +1070,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _buyCredit(String credit) {
     print("RM " + credit);
     if (credit.length <= 0) {
-      Toast.show("Please enter correct amount", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent[100],
+          content: Text(
+            'Please Enter Correct Amount',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.black,
+              fontSize: 15,
+            ),
+          ),
+        ),
+      );
       return;
     }
     showDialog(

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:beautylens/purchased_history.dart';
 import 'package:beautylens/profile_screen.dart';
-import 'package:beautylens/bloc.dart';
+
 import 'admin_products_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -36,7 +36,6 @@ class _MainMenuState extends State<MainMenu> {
   String cartQuantity;
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final navigatorKey = GlobalKey<NavigatorState>();
-  NavigationDrawerBloc bloc = NavigationDrawerBloc();
 
   @override
   void initState() {
@@ -139,21 +138,6 @@ class _MainMenuState extends State<MainMenu> {
         home: Scaffold(
           key: MainMenu.scaffoldKey,
           drawer: isAdmin ? adminDrawer() : mainDrawer(),
-          // body: StreamBuilder(
-          //   stream: bloc.getNavigation,
-          //   initialData: bloc.navigationProvider.currentNavigation,
-          //   builder: (context, snapshot) {
-          //     if (bloc.navigationProvider.currentNavigation == "My Cart") {
-          //       return CartScreen(user: widget.user,);
-          //     }
-          //     if (bloc.navigationProvider.currentNavigation ==
-          //         "Purchased History") {
-          //       return PurchasedHistoryScreen(user: widget.user,);
-          //     }
-          //     // if (bloc.navigationProvider.currentNavigation == "PageTwo") {
-          //     //   return PageTwo();
-          //     // }
-          //     else {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -478,9 +462,6 @@ class _MainMenuState extends State<MainMenu> {
                 ),
               ),
             ],
-            //     );
-            //   } //else
-            // }, //builder
           ),
           floatingActionButton: FloatingActionButton.extended(
             elevation: 5,

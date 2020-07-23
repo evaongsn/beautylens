@@ -39,206 +39,229 @@ class _LoginScreenState extends State<LoginScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.indigo[50],
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 40,
-            ),
-            Hero(
-              tag: 'eyes',
-              child: Image(
-                image: AssetImage('assets/images/contact-lens.png'),
-                alignment: Alignment.center,
-                height: 80,
-                width: 80,
-                color: Colors.indigo[200],
-              ),
-            ),
-            Hero(
-              tag: 'name',
-              child: Material(
-                color: Color(0x00000000),
-                child: GradientText(
-                  "Beauty Lens",
-                  gradient: LinearGradient(colors: [
-                    Colors.deepPurple[100],
-                    Colors.indigo[200],
-                    Colors.pink[100]
-                  ]),
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Bellota',
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Log In',
-                  style: TextStyle(
-                      fontSize: 40,
-                      //fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins')),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            TextField(
-              style: TextStyle(fontSize: 15, fontFamily: 'Poppins'),
-              controller: emailController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
-                ),
-                hintText: 'Email',
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextField(
-              style: TextStyle(fontSize: 15, fontFamily: 'Poppins'),
-              controller: passwordController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showPassword = !_showPassword;
-                    });
-                  },
-                  child: Icon(
-                    _showPassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
-                ),
-                hintText: 'Password',
-              ),
-              obscureText: !_showPassword,
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              children: <Widget>[
-                Checkbox(
-                    value: rememberMe,
-                    activeColor: Colors.indigo[200],
-                    onChanged: (bool value) {
-                      _rememberMe(value);
-                    }),
-                Text(
-                  'Remember me',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            RaisedButton(
-              onPressed: () {
-                setState(() {
-                  isGuest = false;
-                  _login();
-                });
-              },
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 150),
+      body: //Padding(
+          //  padding: EdgeInsets.symmetric(horizontal: 5),
+          // child:
+          Column(
+        children: <Widget>[
+          SizedBox(
+            height: 40,
+          ),
+          Hero(
+            tag: 'eyes',
+            child: Image(
+              image: AssetImage('assets/images/contact-lens.png'),
+              alignment: Alignment.center,
+              height: 80,
+              width: 80,
               color: Colors.indigo[200],
-              child: Text(
-                'Login',
-                textAlign: TextAlign.center,
+            ),
+          ),
+          Hero(
+            tag: 'name',
+            child: Material(
+              color: Color(0x00000000),
+              child: GradientText(
+                "Beauty Lens",
+                gradient: LinearGradient(colors: [
+                  Colors.deepPurple[100],
+                  Colors.indigo[200],
+                  Colors.pink[100]
+                ]),
                 style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Poppins',
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Bellota',
                 ),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(10.0),
-                side: BorderSide(color: Colors.black),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            RaisedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    (MaterialPageRoute(
-                        builder: (BuildContext context) => RegisterScreen())));
-              },
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 135),
-              color: Colors.blueGrey[50],
-              child: Text(
-                'Register',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(10.0),
-                side: BorderSide(color: Colors.black),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                FlatButton(
-                  child: Align(
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Card(
+            // shape: RoundedRectangleBorder(
+            //   borderRadius: BorderRadius.circular(15.0),
+            // ),
+            color: Colors.indigo[100],
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Continue as Guest',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Colors.indigo,
-                          decoration: TextDecoration.underline),
+                    child: Text('Log In',
+                        style: TextStyle(
+                            fontSize: 40,
+                            //fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins')),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  TextField(
+                    style: TextStyle(fontSize: 15, fontFamily: 'Poppins'),
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      hintText: 'Email',
                     ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      isGuest = true;
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    style: TextStyle(fontSize: 15, fontFamily: 'Poppins'),
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showPassword = !_showPassword;
+                          });
+                        },
+                        child: Icon(
+                          _showPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      hintText: 'Password',
+                    ),
+                    obscureText: !_showPassword,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Checkbox(
+                          value: rememberMe,
+                          activeColor: Colors.indigo[200],
+                          onChanged: (bool value) {
+                            _rememberMe(value);
+                          }),
+                      Text(
+                        'Remember me',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        isGuest = false;
+                        _login();
+                      });
+                    },
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 150),
+                    color: Colors.indigo[200],
+                    child: Text(
+                      'Login',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10.0),
+                      side: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          (MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  RegisterScreen())));
+                    },
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 135),
+                    color: Colors.blueGrey[50],
+                    child: Text(
+                      'Register',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10.0),
+                      side: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      FlatButton(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Continue as Guest',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.indigo[700],
+                                decoration: TextDecoration.underline),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isGuest = true;
 
-                      _guestLogin();
-                    });
-                  },
-                ),
-                FlatButton(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Forget Password?',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Colors.indigo,
-                          decoration: TextDecoration.underline),
-                    ),
+                            _guestLogin();
+                          });
+                        },
+                      ),
+                      FlatButton(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Forget Password?',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.indigo[700],
+                                decoration: TextDecoration.underline),
+                          ),
+                        ),
+                        onPressed: _forgotPassword,
+                      ),
+                    ],
                   ),
-                  onPressed: _forgotPassword,
-                ),
-              ],
+                  SizedBox(
+                    height: 55,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+      //  ),
     );
   }
 
