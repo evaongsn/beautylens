@@ -13,7 +13,7 @@ $oldpass = sha1($oldpassword);
 $newpass = sha1($newpassword);
 
 if (isset($encoded_string)){
-    $path = '../profile/'.$phone.'.jpg';
+    $path = '../users_images/'.$email.'.jpg';
     file_put_contents($path, $decoded_string);
     echo 'success';
 }
@@ -24,7 +24,7 @@ if (isset($name)){
     if ($conn->query($sqlupdatename)){
         echo 'success';    
     }else{
-        echo 'success';
+        echo 'sucess';
     }
     
 }
